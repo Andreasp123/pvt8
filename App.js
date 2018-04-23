@@ -1,9 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Main from './Components/Main';
+import StreetLamp from './Components/StreetLamp';
+import data from './Components/data';
 
 export default class App extends React.Component {
   render() {
+    const {data} = this.props;
+
     return (
       <Main />
     );

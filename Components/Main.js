@@ -1,37 +1,58 @@
 import React, {Component} from 'react';
-
-
+import lamps from './StreetLamp';
+import data from './data';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView } from 'react-native';
-
 //import SimpleMap from './SimpleMap';
 import MapView from 'react-native-maps';
-
 
 
 export default class Main extends React.Component {
   constructor(props) {
    super(props);
-   this.state = { text: 'Destination' };
+   this.state = { text: 'Destination' ,
+      latitude: 59.326822,
+      longitude: 18.071540,
+      error: null,
+  };
  }
+
+ componentDidMount() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          error: null,
+        });
+      },
+      (error) => this.setState({ error: error.message }),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+    );
+}
 
  handleClick = () => {
    alert('Button clicked!');
  }
 
-
-
   render() {
-    const usernameValidators = [
-    {
-      message: 'Username must be 4 - 12 characters',
-      validator: value => validator.length(value, { min: 4, max: 12 }),
-    },
-    {
-      message: 'Username must be alphanumeric.',
-      validator: value => validator.isAlphanumeric(value),
-    },
-  ];
+    console.log(this.state.latitude,
+    this.state.longitude,);
+    //const StreetLamp  = this.props.StreetLamp;
+
+
+
+    let markers = data.map(lamps =>  (
+      <MapView.Marker
+      key={lamps.id}
+      coordinate={{
+      latitude: lamps.lat,
+      longitude: lamps.lng,
+    }}
+    title={lamps.id}
+    description={lamps.id}
+  />
+));
 
 
     return (
@@ -51,33 +72,18 @@ export default class Main extends React.Component {
           </TouchableOpacity>
 
       </View>
+        if(this.state.latitude !== null){
 
-
-
-
-
-
-
+        }
         <MapView style={styles.map}
         region ={{
-        latitude:59.338835,
-        longitude:18.036469,
+        latitude:this.state.latitude,
+        longitude:this.state.longitude,
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
-   }}
-   >
-
-
-
-   <MapView.Marker
-      coordinate={{
-        latitude:59.338835,
-        longitude:18.036469,
       }}
-        title={'My marker title'}
-        description={'My marker description'}
-        />
-
+      >
+        {markers}
         </MapView>
 
 
@@ -102,6 +108,7 @@ export default class Main extends React.Component {
     );
   }
 };
+
 const styles = StyleSheet.create({
  container: {
 flex: 1,
