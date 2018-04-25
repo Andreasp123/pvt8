@@ -5,8 +5,8 @@ import { StyleSheet, Text, View, TextInput, Scrollview,
 import doge from './doge.jpeg';
 import { Constants, MapView } from 'expo';
 import data from './data';
-
-// Using a local version here because we need it to import MapView from 'expo'
+import testdata from './testdata';
+import street from './StreetLamp';
 import MapViewDirections from './MapViewDirections';
 
 const { width, height } = Dimensions.get('window');
@@ -18,16 +18,21 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyCYvMpmVhFc0ydILEuXGJNYNGFnBoKPCL8';
 
+//const myjsonstring = 'https://pvt.dsv.su.se/Group08/getLamps?working=false';
+
 export default class Main extends Component {
 
 	constructor(props) {
 		super(props);
 
+
 		this.state = {
+      number: 1,
       latitude: 59.326822,
       longitude: 18.071540,
       originLatitude: 59.326822,
       origionLongitude: 18.071540,
+      dataSource:[],
 
       error: null,
       origin: [
@@ -51,6 +56,7 @@ export default class Main extends Component {
 
 		this.mapView = null;
 	}
+
   componentDidMount() {
      navigator.geolocation.getCurrentPosition(
        (position) => {
@@ -63,20 +69,60 @@ export default class Main extends Component {
                longitude: position.coords.longitude,
              },
            ],
+
+
+
            originLatitude: position.coords.latitude,
            originLongitude: position.coords.longitude,
            error: null,
          });
        },
+
        (error) => this.setState({ error: error.message }),
        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
      );
+
+     return fetch('https://pvt.dsv.su.se/Group08/getLamps?working=false')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({data : responseJson})
+        console.log(data)
+        let markers = responseJson.map(lamps => (
+             <MapView.Marker
+             key={lamps.name}
+             coordinate={{
+             latitude: lamps.lat,
+             longitude: lamps.lng,
+
+
+           }}
+           image={doge}
+           title={lamps.name}
+           description={lamps.name}
+
+
+           />
+
+        ));
+          this.setState({
+            dataSource : markers,
+
+          });
+
+
+
+
+      })
+      .catch((error) =>{
+        console.error(error);
+      });
  }
+
+
 
  handleClick = () => {
    alert('Button clicked!');
  }
-
 
 	// onMapPress = (e) => {
 	// 	if (this.state.coordinates.length == 2) {
@@ -110,28 +156,37 @@ export default class Main extends Component {
 		Alert.alert(errorMessage);
 	}
 
+
+
 	render() {
 
 
-    let markers = data.map(lamps =>  (
-
-      <MapView.Marker
-      key={lamps.id}
-      coordinate={{
-      latitude: lamps.lat,
-      longitude: lamps.lng,
 
 
-    }}
-    image={doge}
-    title={lamps.id}
-    description={lamps.id}
 
 
-    />
-    ));
+    // let markers = data.map(lamps => (
+    //      <MapView.Marker
+    //      key={lamps.id}
+    //      coordinate={{
+    //      latitude: lamps.lat,
+    //      longitude: lamps.lng,
+    //
+    //
+    //    }}
+    //    image={doge}
+    //    title={lamps.id}
+    //    description={lamps.id}
+    //
+    //
+    //    />
+    //
+    // ));
+
+
 
 		return (
+
       <View style= {styles.container}>
 
 
@@ -151,7 +206,6 @@ export default class Main extends Component {
       </View>
 
   			  <MapView style={styles.map}
-
   				initialRegion={{
             latitude:this.state.latitude,
             longitude:this.state.longitude,
@@ -159,11 +213,15 @@ export default class Main extends Component {
             longitudeDelta: 0.034
   				}}
 
-  				ref={c => this.mapView = c} // eslint-disable-line react/jsx-no-bind
+
+  				ref={c => this.mapView = c}
   				onPress={this.onMapPress}
   				loadingEnabled={true}
   			>
-        {markers}
+
+
+        {this.state.dataSource}
+
   				{this.state.coordinates.map((coordinate, index) =>
   					<MapView.Marker key={`coordinate_${index}`} coordinate={coordinate} /> // eslint-disable-line react/no-array-index-key
   				)}
@@ -179,11 +237,15 @@ export default class Main extends Component {
   						onError={this.onError}
   					/>
   				)}
+         //{"här hade jag markers"}
+
+
   			</MapView>
         <View style={styles.bottom}>
         <TextInput style={styles.destinationInput}
         onChangeText={(text) => this.setState({text})}
         value={this.state.text}
+
       />
         <TouchableOpacity style={styles.warningBtn} onPress={()=>{alert("you clicked me")}}>
             <Image
