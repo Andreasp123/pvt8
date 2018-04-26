@@ -15,3 +15,4 @@ export default  [
   { id: '6', lat:59.322160, lng:18.027474, status: 'On'}
 
 ]
+
