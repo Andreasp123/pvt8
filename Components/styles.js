@@ -25,8 +25,8 @@ export default StyleSheet.create({
      position: 'absolute',
      top: 20,
      left: 5,
-     width: 25,
-     height: 15,
+     width: 200,
+     height: 100,
      borderRadius: 25/2,
     },
    warningBtn:{
@@ -37,6 +37,13 @@ export default StyleSheet.create({
      height: 15,
 
     },
+    warning:{
+      position: 'absolute',
+      width: 25,
+      height: 15,
+      borderRadius: 25/2,
+
+     },
     warningBtnOnMap:{
       position: 'absolute',
       bottom: 25,

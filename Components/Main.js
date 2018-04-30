@@ -2,14 +2,22 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
   Alert, Platform, Communications, Linking} from 'react-native';
-  import styles from './styles';
-import doge from './doge.jpeg';
+import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
 import { Constants, MapView } from 'expo';
+import styles from './styles';
+import doge from './doge.jpeg';
+import warning from './warning.jpg';
+
 import data from './data';
 import call from './call';
 import testdata from './testdata';
 import street from './StreetLamp';
+//import FavouritePlaces from './FavouritePlaces';
+import testnavigation from './testnavigation';
 import MapViewDirections from './MapViewDirections';
+import FavPlaces from './FavPlaces';
+import register from './Register';
+import App from '../App'
 
 
 const { width, height } = Dimensions.get('window');
@@ -24,6 +32,21 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyCYvMpmVhFc0ydILEuXGJNYNGFnBoKPCL8';
 //const myjsonstring = 'https://pvt.dsv.su.se/Group08/getLamps?working=false';
 
 export default class Main extends Component {
+  // profile(){
+  //   this.props.navigation.navigate("login");
+  // }
+  favPlaces(){
+
+    return <FavPlaces numberToCall={this.state.numberToCall} />
+    this.props.navigation.navigate("favPlaces")
+  }
+  // register(){
+  //
+  //   this.props.navigation.navigate("register")
+  // }
+
+
+
   // rad 89-113 ska kommenteras in igen när DB fungerar
   // även rad 255
 
@@ -31,7 +54,9 @@ export default class Main extends Component {
 		super(props);
 
 
+
 		this.state = {
+
       numberToCall : 112,
       number: 1,
       latitude: 59.326822,
@@ -39,6 +64,9 @@ export default class Main extends Component {
       originLatitude: 59.326822,
       origionLongitude: 18.071540,
       dataSource:[],
+      markTest:[],
+      testValue: 'hejsan',
+
 
       error: null,
       origin: [
@@ -47,6 +75,8 @@ export default class Main extends Component {
 					longitude: 18.071540,
         },
       ],
+
+      panicLocation: [],
 
 			coordinates: [
 				// {
@@ -63,6 +93,8 @@ export default class Main extends Component {
 		this.mapView = null;
 	}
 
+
+
   componentDidMount() {
      navigator.geolocation.getCurrentPosition(
        (position) => {
@@ -70,6 +102,12 @@ export default class Main extends Component {
            latitude: position.coords.latitude,
            longitude: position.coords.longitude,
            origin: [
+             {
+               latitude: position.coords.latitude,
+               longitude: position.coords.longitude,
+             },
+           ],
+           panicLocation: [
              {
                latitude: position.coords.latitude,
                longitude: position.coords.longitude,
@@ -84,43 +122,97 @@ export default class Main extends Component {
        (error) => this.setState({ error: error.message }),
        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
      );
+
+
+
+
      //DETTA ÄR BARA FÖR ATT DATABASEN INTE SVARAR
      //SKA KOMMENTERAS IN IGEN
 
-     // return fetch('https://pvt.dsv.su.se/Group08/getLamps?working=false')
-     //  .then((response) => response.json())
-     //  .then((responseJson) => {
-     //    this.setState({data : responseJson})
-     //    let markers = responseJson.map(lamps => (
-     //         <MapView.Marker
-     //         key={lamps.name}
-     //         coordinate={{
-     //         latitude: lamps.lat,
-     //         longitude: lamps.lng,
-     //
-     //
-     //       }}
-     //       image={doge}
-     //       title={lamps.name}
-     //       description={lamps.name}
-     //       />
-     //    ));
-     //      this.setState({
-     //        dataSource : markers,
-     //      });
-     //  })
-     //  .catch((error) =>{
-     //    console.error(error);
-     //  });
+     return fetch('https://pvt.dsv.su.se/Group08/getLamps?working=false')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({data : responseJson})
+        let markers = responseJson.map(lamps => (
+             <MapView.Marker
+             key={lamps.name}
+             coordinate={{
+             latitude: lamps.lat,
+             longitude: lamps.lng,
+
+
+           }}
+           image={doge}
+           title={lamps.name}
+           description={lamps.name}
+           />
+        ));
+          this.setState({
+            dataSource : markers,
+          });
+      })
+      .catch((error) =>{
+        console.error(error);
+      });
+ }
+
+ handleClickFavourite = () => {
+
+     //this.props.navigation.navigate("register");
+
  }
 
 
+
+
+
+ handleClickProfile = () => {
+
+     //this.props.navigation.navigate("login", testValue: item.testValue);
+
+   // this.props.navigation.navigate('testnavigation', {
+   //            itemId: 86,
+   //            otherParam: 'First Details',
+   //          });
+ }
 
  handleClick = () => {
    alert('Button clicked!');
  }
 
  handleClickPanic = () => {
+
+
+   fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
+  method: 'POST',
+  headers: {
+    //'Accept' : "application/json",
+    //'Content-Type': "application/json"},
+    'Accept': 'text/plain',
+    'Content-Type': 'text/plain'},
+  body: JSON.stringify({
+    latitude:'59.1111111',
+    //latitude: this.state.originLatitude,
+    longitude: '59.2222222',
+  })
+}).
+  then((response) => {
+    console.log('Done', response);
+  });
+
+  //  fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
+  // method: 'POST',
+  // headers: {
+  //   Accept: 'text/plain',
+  //   Content-Type: 'text/plain',
+  // },
+  // body: JSON.stringify({
+  //   id: "25",
+  //   latitude: '59.111111',
+  //   longitude: '59.222222',
+  // }),
+  // });
+
    var ring = false
    Alert.alert(
   'SKRIK OCH PANIK',
@@ -134,8 +226,8 @@ export default class Main extends Component {
 )
   if(ring){
     const args = {
-   number: '112', // String value with the number to call
-   prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
+   number: '112',
+   prompt: false
  }
  call(args).catch(console.error)
   }
@@ -176,7 +268,29 @@ export default class Main extends Component {
 
 
 
+
+
 	render() {
+
+
+
+
+    // if(street.length > 1){
+      let panicMarker = street.map(panic => (
+
+           <MapView.Marker
+           key={panic.name}
+           coordinate={{
+           latitude: panic.lat,
+           longitude: panic.lng,
+         }}
+         image={warning}
+
+         />
+
+      ));
+    // }
+
 
     // let markers = data.map(lamps => (
     //      <MapView.Marker
@@ -184,6 +298,7 @@ export default class Main extends Component {
     //      coordinate={{
     //      latitude: lamps.lat,
     //      longitude: lamps.lng,
+    //
     //
     //
     //    }}
@@ -215,17 +330,26 @@ export default class Main extends Component {
 
 		return (
 
+
+
+
       <View style= {styles.container}>
 
 
       <View style={styles.top}>
-      <TouchableOpacity style={styles.profileBtn} onPress={()=>{alert("you clicked me")}}>
+
+      <TouchableOpacity style={styles.profileBtn} onPress={()=>{
+        this.handleClickProfile()}
+        }>
           <Image source={doge}
-          //<Image source={require("./doge.jpeg")}
           borderRadius={17}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.favouriteBtn} onPress={()=>{alert("you clicked me")}}>
+
+
+        <TouchableOpacity style={styles.favouriteBtn} onPress={()=>{
+          this.handleClickFavourite()}
+          }>
             <Image source={require("./favourite.png")}
             borderRadius={49}
             />
@@ -248,7 +372,11 @@ export default class Main extends Component {
   			>
         //DETTA ÄR BARA FÖR ATT DATABASEN INTE SVARAR
         //SKA KOMMENTERAS IN IGEN
-        //{destination}
+        {destination}
+        {panicMarker}
+
+
+
 
 
         {this.state.dataSource}
@@ -279,6 +407,7 @@ export default class Main extends Component {
           </TouchableOpacity>
         </View>
 			</View>
+
 		);
 	}
 }

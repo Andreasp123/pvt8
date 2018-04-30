@@ -2,7 +2,7 @@ import { Platform, Linking } from 'react-native'
 
 const isString = (str) => Object.prototype.toString.call(str) === '[object String]'
 const isBool = (bool) => Object.prototype.toString.call(bool) === '[object Boolean]'
-
+//jag har inte alls copy pasteat denna koden!
 const openLink = (url, cb) => {
   return Linking.canOpenURL(url).then(canOpen => {
     if (!canOpen) {
@@ -25,5 +25,5 @@ const call = (args) => {
 
   return openLink(url)
 }
-//jag har inte alls copy pasteat denna koden!
+
 export default call
