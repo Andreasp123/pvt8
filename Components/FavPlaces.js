@@ -2,18 +2,21 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
   Alert, Platform, Communications, Linking} from 'react-native';
-import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
+//import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
+import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-navigation';
 import { Constants, MapView } from 'expo';
 import doge from './doge.jpeg';
 import warning from './warning.jpg';
 
 import Main from './Main';
-
-
-
 //const myjsonstring = 'https://pvt.dsv.su.se/Group08/getLamps?working=false';
 
 export default class FavPlaces extends Component {
+  constructor(props){
+    super(props);
+    this.navigate = this.props.navigation.navigate;
+    this.params = this.props.navigation.state.params;
+  }
   profile(){
     this.props.navigation.navigate("login");
   }
@@ -28,6 +31,10 @@ export default class FavPlaces extends Component {
   }
 
     render() {
+
+
+      console.log("1", this.props.navigation.state.params.latitude);
+      console.log("2", this.params.latitude);
           return (
               <View style={styles.container}>
                   <TouchableOpacity style={styles.btn} onPress={() => {

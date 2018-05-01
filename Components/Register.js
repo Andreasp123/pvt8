@@ -60,7 +60,7 @@ export default class Register extends React.Component {
   render() {
     return(
       <View style= {styles.container}>
-      <Text> Register </Text>
+
 
       <TextInput
       placeholder={"Username"} style ={styles.input}
@@ -103,7 +103,7 @@ input: {
   height: 50,
   width: 100 + "%",
   paddingHorizontal: 50,
-  backgroundColor: "white",
+  backgroundColor: "lightpink",
   marginBottom: 10,
 
 }

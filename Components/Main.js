@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
-  Alert, Platform, Communications, Linking} from 'react-native';
-import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
+  Alert, Platform, Communications, Linking, LoginButton, TouchableHighlight} from 'react-native';
+//import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
+import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-navigation';
 import { Constants, MapView } from 'expo';
 import styles from './styles';
 import doge from './doge.jpeg';
@@ -35,11 +36,7 @@ export default class Main extends Component {
   // profile(){
   //   this.props.navigation.navigate("login");
   // }
-  favPlaces(){
 
-    return <FavPlaces numberToCall={this.state.numberToCall} />
-    this.props.navigation.navigate("favPlaces")
-  }
   // register(){
   //
   //   this.props.navigation.navigate("register")
@@ -52,13 +49,17 @@ export default class Main extends Component {
 
 	constructor(props) {
 		super(props);
+    this.navigate = this.props.navigation.navigate;
+    this.params = this.props.navigation.state.params;
 
 
 
 		this.state = {
+      username : this.props.navigation.state.params.username,
 
       numberToCall : 112,
       number: 1,
+
       latitude: 59.326822,
       longitude: 18.071540,
       originLatitude: 59.326822,
@@ -90,8 +91,14 @@ export default class Main extends Component {
 			],
 		};
 
+
 		this.mapView = null;
 	}
+  favPlaces(){
+
+
+    this.props.navigation.navigate("favPlaces")
+  }
 
 
 
@@ -122,6 +129,12 @@ export default class Main extends Component {
        (error) => this.setState({ error: error.message }),
        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
      );
+
+     this.setState({
+       username : this.props.navigation.state.params.username,
+       // console.log("1", this.props.navigation.state.params.username);
+       // console.log("2", this.params.username);
+     })
 
 
 
@@ -157,8 +170,16 @@ export default class Main extends Component {
  }
 
  handleClickFavourite = () => {
+   console.log(this.state.latitude)
+   this.navigate({
+   routeName: 'favPlaces',
+   key: 'favPlaces',
+   params: {
+      latitude: this.state.latitude
+   }
+});
 
-     //this.props.navigation.navigate("register");
+     // this.props.navigation.navigate("favPlaces");
 
  }
 
@@ -268,9 +289,14 @@ export default class Main extends Component {
 
 
 
-
-
 	render() {
+    console.log("1", this.state.username);
+  //  console.log("2", this.params.username);
+    //console.log(this.props.navigation.state.params.latitude);
+    // console.log(this.props.navigation.params.username);
+    // console.log(this.props.navigation.state.params.username);
+    //console.log(this.params.username);
+
 
 
 
@@ -312,6 +338,8 @@ export default class Main extends Component {
     // ));
 
 
+
+
     let destination = this.state.coordinates.map(destination => (
       <MapViewDirections
       key={destination.latitude}
@@ -326,12 +354,7 @@ export default class Main extends Component {
       />
 
     ));
-
-
 		return (
-
-
-
 
       <View style= {styles.container}>
 
@@ -379,6 +402,7 @@ export default class Main extends Component {
 
 
 
+
         {this.state.dataSource}
 
         // "här låg det som ligger under 111111 i fungerande med markers "
@@ -396,6 +420,7 @@ export default class Main extends Component {
         onChangeText={(text) => this.setState({text})}
         value={this.state.text}
 
+
       />
         <TouchableOpacity style={styles.warningBtn} onPress={()=>{
           this.handleClickPanic()}
@@ -405,6 +430,8 @@ export default class Main extends Component {
             borderRadius={27}
             />
           </TouchableOpacity>
+
+
         </View>
 			</View>
 

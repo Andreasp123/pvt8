@@ -12,10 +12,12 @@ import Register from './Components/Register'
 import StreetLamp from './Components/StreetLamp';
 import data from './Components/data';
 import { SwitchNavigator,TabNavigator, StackNavigator  } from 'react-navigation';
+//import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-native';
 
 const mainOptions = SwitchNavigator({
   main : Main,
   favPlaces : favPlaces,
+  register : Register
 
 })
 const introStack = StackNavigator({
@@ -24,8 +26,11 @@ const introStack = StackNavigator({
 })
 
 const SwNavigator = SwitchNavigator({
-  login : introStack,
-  main : mainOptions
+  //login : introStack,
+  loggingIn : introStack,
+  main : Main,
+  favPlaces : favPlaces,
+  register : Register
 
 })
 export default class App extends React.Component {

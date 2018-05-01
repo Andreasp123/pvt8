@@ -1,56 +1,94 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
-  Alert, Platform, Communications, Linking, Icon} from 'react-native';
+  Alert, Platform, Communications, Linking} from 'react-native';
 
 import Main from './Main';
-import { StackNavigator, SwitchNavigator  } from 'react-navigation';
-
+//import { StackNavigator, SwitchNavigator  } from 'react-navigation';
+//import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
+import { SwitchNavigator,TabNavigator, StackNavigator  } from 'react-navigation';
 export default class LoggingIn extends React.Component {
+
+
+  constructor(props){
+    super(props);
+    this.state={
+
+        username: "",
+        password:"",
+    }
+    this.signIn = this.signIn.bind(this);
+    this.navigate = this.props.navigation.navigate;
+    this.params = this.props.navigation.state.params;
+  }
+
 
   register(){
     this.props.navigation.navigate("register");
   }
-  constructor(){
-    super();
-    this.state={
-      credentials: {
-        username: "",
-        password:"",
-
-      }
-    }
-  }
 
   signIn(){
-    if(this.state.username === undefined){
-      alert("Username can't be empty")
-    } else {
-      //call mot databas för att se om det är rätt user/lösen
-      //if(!taken){
-      //if(success){
-          this.props.navigation.navigate("main")
-        //}
+      if(this.state.username === undefined){
+        alert("Username can't be empty")
+      } else {
+        console.log("username", this.state.username)
 
-      //}
+        this.navigate({
+        routeName: 'main',
+        key: 'main',
+        params: {
+           username: this.state.username
+        }
+     });
+
+        // this.navigate("main", {
+        //   params: {
+        //   username: this.state.username,
+        //
+        //   }
+        // });
     }
   }
+
   register(){
     this.props.navigation.navigate("register")
 
   }
 
   getUsername(text){
+    console.log(this.state.username)
     this.setState({
       username : text,
     })
+    console.log(this.state.username)
   }
 
   getPasswordText(text){
+    console.log(this.state.password)
     this.setState({
       password : text,
     })
+    console.log(this.state.password)
   }
+
+  updateUsername(text, field){
+    let newUsername = Object.assign(this.state.username);
+    username[field] = text;
+    this.setState({
+      username: newUsername
+    });
+    console.log("user", this.state.username)
+  }
+  updatePassword(text, field){
+    let newPassword = Object.assign(this.state.password);
+    username[field] = text;
+    this.setState({
+      password: newPassword
+    });
+    console.log("password", this.state.password)
+  }
+
+
 
 
   render() {
@@ -60,11 +98,13 @@ export default class LoggingIn extends React.Component {
 
 
       <TextInput
+      value={this.state.username}
       placeholder={"Username"} style ={styles.input}
       onChangeText={text => this.getUsername(text, 'username')}
       />
 
       <TextInput
+      value={this.state.password}
       secureTextEntry
       placeholder={"Password"} style ={styles.input}
       onChangeText={text => this.getPasswordText(text, 'password')}
