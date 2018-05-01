@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, NavigatorIOS, Button,
  } from 'react-native';
 import Main from './Components/Main';
 import Login from './Components/Login';
+import FavouritePlaces from './Components/FavouritePlaces';
 import LoggingIn from './Components/LoggingIn';
 import favPlaces from './Components/FavPlaces';
 import Register from './Components/Register'
@@ -17,7 +18,9 @@ import { SwitchNavigator,TabNavigator, StackNavigator  } from 'react-navigation'
 const mainOptions = SwitchNavigator({
   main : Main,
   favPlaces : favPlaces,
-  register : Register
+  favouritePlaces : FavouritePlaces,
+  register : Register,
+
 
 })
 const introStack = StackNavigator({
@@ -30,6 +33,7 @@ const SwNavigator = SwitchNavigator({
   loggingIn : introStack,
   main : Main,
   favPlaces : favPlaces,
+  favouritePlaces : FavouritePlaces,
   register : Register
 
 })

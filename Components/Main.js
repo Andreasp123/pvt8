@@ -10,10 +10,11 @@ import doge from './doge.jpeg';
 import warning from './warning.jpg';
 
 import data from './data';
+
 import call from './call';
 import testdata from './testdata';
 import street from './StreetLamp';
-//import FavouritePlaces from './FavouritePlaces';
+import FavouritePlaces from './FavouritePlaces';
 import testnavigation from './testnavigation';
 import MapViewDirections from './MapViewDirections';
 import FavPlaces from './FavPlaces';
@@ -97,7 +98,14 @@ export default class Main extends Component {
   favPlaces(){
 
 
-    this.props.navigation.navigate("favPlaces")
+    this.navigate({
+    routeName: 'favPlaces',
+    key: 'favPlaces',
+    params: {
+       username: this.state.username
+    }
+ });
+    // this.props.navigation.navigate("favPlaces")
   }
 
 
@@ -170,14 +178,22 @@ export default class Main extends Component {
  }
 
  handleClickFavourite = () => {
-   console.log(this.state.latitude)
    this.navigate({
-   routeName: 'favPlaces',
-   key: 'favPlaces',
+   routeName: 'favouritePlaces',
+   key: 'favouritePlaces',
    params: {
-      latitude: this.state.latitude
+      username: this.state.username
    }
-});
+ });
+
+//    console.log(this.state.latitude)
+//    this.navigate({
+//    routeName: 'favPlaces',
+//    key: 'favPlaces',
+//    params: {
+//       latitude: this.state.latitude
+//    }
+// });
 
      // this.props.navigation.navigate("favPlaces");
 

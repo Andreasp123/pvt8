@@ -7,7 +7,7 @@ import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-navigation
 import { Constants, MapView } from 'expo';
 import doge from './doge.jpeg';
 import warning from './warning.jpg';
-
+import data from './data';
 import Main from './Main';
 //const myjsonstring = 'https://pvt.dsv.su.se/Group08/getLamps?working=false';
 
@@ -16,6 +16,10 @@ export default class FavPlaces extends Component {
     super(props);
     this.navigate = this.props.navigation.navigate;
     this.params = this.props.navigation.state.params;
+
+    this.state ={
+      data : data,
+    }
   }
   profile(){
     this.props.navigation.navigate("login");
@@ -24,17 +28,23 @@ export default class FavPlaces extends Component {
     this.props.navigation.navigate("main")
   }
   handleClickMain = () => {
+    this.navigate({
+    routeName: 'main',
+    key: 'main',
+    params: {
+      // username: this.state.username
+    }
+ });
 
-
-      this.props.navigation.navigate("main");
+      // this.props.navigation.navigate("main");
 
   }
 
     render() {
+      // console.log("1", this.props.navigation.state.params.latitude);
+      // console.log("2", this.params.latitude);
 
 
-      console.log("1", this.props.navigation.state.params.latitude);
-      console.log("2", this.params.latitude);
           return (
               <View style={styles.container}>
                   <TouchableOpacity style={styles.btn} onPress={() => {
@@ -46,6 +56,8 @@ export default class FavPlaces extends Component {
                   borderRadius={17}
                   />
                 </TouchableOpacity>
+
+              
 
               </View>
           );

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
   Alert, Platform, Communications, Linking} from 'react-native';
-
+import ljusag from './lg.png';
 import Main from './Main';
 //import { StackNavigator, SwitchNavigator  } from 'react-navigation';
 //import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
@@ -94,6 +94,7 @@ export default class LoggingIn extends React.Component {
   render() {
     return(
       <View style= {styles.container}>
+
       <View style ={styles.mainContainer}>
 
 
@@ -131,6 +132,7 @@ export default class LoggingIn extends React.Component {
 
 
 
+
       </View>
     );
   }
@@ -149,6 +151,7 @@ const styles = StyleSheet.create({
   // backgroundColor: "powderblue",
 },
 mainContainer:{
+
   height: 80 + "%",
   width: 100 + "%",
   justifyContent: "center",
@@ -176,5 +179,12 @@ signUpBtn: {
   position: 'absolute',
   bottom: 25,
   right: 40,
+},
+backgroundImage:{
+  flex: 1,
+  backgroundColor:'transparent',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: 100 +"%"
 }
 });
