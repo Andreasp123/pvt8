@@ -11,16 +11,16 @@ export default class Place extends Component {
     render() {
         return (
           //denna gör hela containern klickbar
-          <TouchableOpacity onPress={this.props.findMethod} style={styles.findPlace}>
+          <TouchableOpacity onPress={this.props.findPlace} style={styles.findPlace}>
             <View key={this.props.keyval} style={styles.place}>
 
                 //<Text style={styles.noteText}>{this.props.val.date}</Text>
-                <TouchableOpacity onPress={this.props.findMethod} style={styles.findPlace}>
+                <TouchableOpacity onPress={this.props.findPlace} style={styles.findPlace}>
                 <Text style={styles.placeText}>{this.props.val.place}</Text>
                 //</TouchableOpacity>
-              <TouchableOpacity onPress={this.props.findMethod} style={styles.placeFind}>
-                  <Text style={styles.placeFindText}>Hitta hit</Text>
-              </TouchableOpacity>
+              // <TouchableOpacity onPress={this.props.findPlace} style={styles.findPlace}>
+              //     
+              // </TouchableOpacity>
 
                 <TouchableOpacity onPress={this.props.deleteMethod} style={styles.placeDelete}>
                     <Text style={styles.placeDeleteText}>Delete</Text>

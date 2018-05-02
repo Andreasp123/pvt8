@@ -58,11 +58,17 @@ export default class Main extends Component {
 		this.state = {
       username : this.props.navigation.state.params.username,
 
+      testLat:this.props.navigation.state.params.testLat,
+      testLong:this.props.navigation.state.params.testLong,
+      testDestination : this.props.navigation.state.params.testDestination,
+
+      destinationLocation : [],
       numberToCall : 112,
       number: 1,
 
       latitude: 59.326822,
       longitude: 18.071540,
+
       originLatitude: 59.326822,
       origionLongitude: 18.071540,
       dataSource:[],
@@ -73,21 +79,18 @@ export default class Main extends Component {
       error: null,
       origin: [
         {
-          latitude: 59.326822,
-					longitude: 18.071540,
+          latitude: this.props.navigation.state.params.testLat,
+					longitude: this.props.navigation.state.params.testLong,
         },
       ],
 
       panicLocation: [],
 
 			coordinates: [
-				// {
-				// 	latitude: 37.3317876,
-				// 	longitude: -122.0054812,
-				// },
+
 				{
-					latitude: 59.407968,
-					longitude: 17.943102,
+          latitude: this.props.navigation.state.params.testLat,
+					longitude: this.props.navigation.state.params.testLong,
 				},
 			],
 		};
@@ -132,8 +135,29 @@ export default class Main extends Component {
            originLongitude: position.coords.longitude,
            error: null,
          });
-       },
 
+             if(this.props.navigation.state.params.latitude !== undefined){
+               console.log("funka dåååå", this.props.navigation.state.params.latitude)
+               this.setState({
+                 testLat: this.props.navigation.state.params.latitude,
+                 testLat: this.props.navigation.state.params.longitude,
+             },
+           () => {
+             this.setState({
+
+               coordinates: [
+                 {
+                   latitude: this.state.testLat,
+                   longitude: this.state.testLong,
+                 },
+               ]
+                })
+              }
+           );
+         }
+
+
+       },
        (error) => this.setState({ error: error.message }),
        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
      );
@@ -175,6 +199,8 @@ export default class Main extends Component {
       .catch((error) =>{
         console.error(error);
       });
+
+
  }
 
  handleClickFavourite = () => {
@@ -204,6 +230,17 @@ export default class Main extends Component {
 
 
  handleClickProfile = () => {
+   console.log("pre", this.state.coordinates)
+   this.setState({
+     coordinates: [
+       {
+         latitude: 555555,
+         longitude: 111111,
+       }
+
+     ],
+   })
+   console.log("post", this.state.coordinates)
 
      //this.props.navigation.navigate("login", testValue: item.testValue);
 
@@ -306,12 +343,9 @@ export default class Main extends Component {
 
 
 	render() {
-    console.log("1", this.state.username);
-  //  console.log("2", this.params.username);
-    //console.log(this.props.navigation.state.params.latitude);
-    // console.log(this.props.navigation.params.username);
-    // console.log(this.props.navigation.state.params.username);
-    //console.log(this.params.username);
+    console.log("i render", this.state.coordinates)
+
+
 
 
 
@@ -354,8 +388,22 @@ export default class Main extends Component {
     // ));
 
 
+    // let destination = this.state.destinationLocation.map(destination => (
+    //   <MapViewDirections
+    //   key={destination.lat}
+    //     origin={this.state.origin[0]}
+    //     //origin={this.state.origin}
+    //     destination={this.state.destinationLocation}
+    //     apikey={GOOGLE_MAPS_APIKEY}
+    //     strokeWidth={3}
+    //     strokeColor="hotpink"
+    //     onReady={this.onReady}
+    //     onError={this.onError}
+    //   />
+    //
+    // ));
 
-
+    //DEN FUNGERANDE
     let destination = this.state.coordinates.map(destination => (
       <MapViewDirections
       key={destination.latitude}
@@ -378,6 +426,7 @@ export default class Main extends Component {
       <View style={styles.top}>
 
       <TouchableOpacity style={styles.profileBtn} onPress={()=>{
+        console.log("klickar")
         this.handleClickProfile()}
         }>
           <Image source={doge}
@@ -398,8 +447,10 @@ export default class Main extends Component {
 
   			  <MapView style={styles.map}
   				initialRegion={{
-            latitude:this.state.latitude,
-            longitude:this.state.longitude,
+            latitude:this.state.testLat,
+            longitude:this.state.testLong,
+            // latitude:this.state.latitude,
+            // longitude:this.state.longitude,
             latitudeDelta: 0.043,
             longitudeDelta: 0.034
   				}}

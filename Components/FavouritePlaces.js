@@ -15,17 +15,24 @@ export default class FavouritePlaces extends Component {
 
     constructor(props){
         super(props);
+        this.navigate = this.props.navigation.navigate;
+        this.params = this.props.navigation.state.params;
         this.state = {
             placeArray: [],
             placeText: '',
             testArray: testdata,
             savedPlaces: [],
+            testDestination: [],
+            latitude: '',
+            longitude: '',
         };
     }
     componentDidMount() {
       for(var i = 0; i < testdata.length; i++){
         this.state.savedPlaces.push({
           'place': testdata[i].val,
+          'latitude': testdata[i].lat,
+          'longitude' : testdata[i].long
         });
         this.setState({ savedPlaces: this.state.savedPlaces });
         this.setState({shitText:''});
@@ -42,24 +49,32 @@ let testing = this.state.savedPlaces.map((val, key)=>{
             this.findPlace(val);
             }}
             deleteMethod={()=>this.deletePlace(key)}
-               findMethod={()=>this.findPlace(val)}
+               findPlace={()=>this.findPlace(val)}
             />
 });
-
-
+let places = this.state.placeArray.map((val, key)=>{
+    return <Place key={key} keyval={key} val={val}
+            onPress={() => {
+            this.findPlace(key);
+            }}
+            deleteMethod={()=>this.deletePlace(key)}
+               findPlace={()=>this.findPlace(val)}
+            />
+});
+// let places = this.state.placeArray.map((val, key)=>{
+//     return <Place key={key} keyval={key} val={val}
+//             onPress={() => {
+//             this.findPlace(val);
+//             }}
+//             deleteMethod={()=>this.deletePlace(key)}
+//                findPlace={()=>this.findPlace(val)}
+//             />
+// });
 
 
       //test
 
-        let places = this.state.placeArray.map((val, key)=>{
-            return <Place key={key} keyval={key} val={val}
-                    onPress={() => {
-                    this.findPlace(key);
-                    }}
-                    deleteMethod={()=>this.deletePlace(key)}
-                       findMethod={()=>this.findPlace(val)}
-                    />
-        });
+
 
         return (
             <View style={styles.container}>
@@ -80,7 +95,7 @@ let testing = this.state.savedPlaces.map((val, key)=>{
                 <ScrollView style={styles.scrollContainer}>
 
                     {places}
-                  //  {testing}
+                    {testing}
 
                 </ScrollView>
 
@@ -120,7 +135,29 @@ let testing = this.state.savedPlaces.map((val, key)=>{
     }
 
     findPlace(val){
-        console.log(val)
+      this.setState(
+  {
+    latitude: val.latitude,
+    longitude: val.longitude,
+    testDestination:[
+      {
+        latitude: val.latitude,
+        longitude: val.longitude
+      }
+    ],
+    },
+  () => {
+    this.navigate({
+    routeName: 'main',
+    key: 'main',
+    params: {
+      testLat: this.state.latitude,
+      testLong: this.state.longitude
+
+    },
+ });
+    }
+  );
     }
 }
 

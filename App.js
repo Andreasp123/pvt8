@@ -20,6 +20,7 @@ const mainOptions = SwitchNavigator({
   favPlaces : favPlaces,
   favouritePlaces : FavouritePlaces,
   register : Register,
+  loggingIn : LoggingIn,
 
 
 })

@@ -16,6 +16,8 @@ export default class LoggingIn extends React.Component {
 
         username: "",
         password:"",
+        testLatitude: "",
+        testLongitude: "",
     }
     this.signIn = this.signIn.bind(this);
     this.navigate = this.props.navigation.navigate;
@@ -28,6 +30,7 @@ export default class LoggingIn extends React.Component {
   }
 
   signIn(){
+        console.log("i logg", this.state.testLatitude )
       if(this.state.username === undefined){
         alert("Username can't be empty")
       } else {
@@ -37,7 +40,10 @@ export default class LoggingIn extends React.Component {
         routeName: 'main',
         key: 'main',
         params: {
-           username: this.state.username
+
+           username: this.state.username,
+           testLat: this.state.testLatitude,
+           testLong: this.state.testLongitude
         }
      });
 
@@ -88,11 +94,30 @@ export default class LoggingIn extends React.Component {
     console.log("password", this.state.password)
   }
 
+  componentDidMount() {
+     navigator.geolocation.getCurrentPosition(
+       (position) => {
+         this.setState({
+           testLatitude: position.coords.latitude,
+           testLongitude: position.coords.longitude,
+
+         });
+
+       },
+
+       (error) => this.setState({ error: error.message }),
+       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+     );
+
+
+ }
 
 
 
   render() {
+
     return(
+
       <View style= {styles.container}>
 
       <View style ={styles.mainContainer}>
