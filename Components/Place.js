@@ -18,9 +18,9 @@ export default class Place extends Component {
                 <TouchableOpacity onPress={this.props.findPlace} style={styles.findPlace}>
                 <Text style={styles.placeText}>{this.props.val.place}</Text>
                 //</TouchableOpacity>
-              // <TouchableOpacity onPress={this.props.findPlace} style={styles.findPlace}>
-              //     
-              // </TouchableOpacity>
+              <TouchableOpacity onPress={this.props.findPlace} style={styles.findPlace}>
+
+              </TouchableOpacity>
 
                 <TouchableOpacity onPress={this.props.deleteMethod} style={styles.placeDelete}>
                     <Text style={styles.placeDeleteText}>Delete</Text>

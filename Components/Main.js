@@ -30,6 +30,7 @@ const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyCYvMpmVhFc0ydILEuXGJNYNGFnBoKPCL8';
+const requestCoordinates = 'AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M'
 
 //const myjsonstring = 'https://pvt.dsv.su.se/Group08/getLamps?working=false';
 
@@ -61,13 +62,15 @@ export default class Main extends Component {
       testLat:this.props.navigation.state.params.testLat,
       testLong:this.props.navigation.state.params.testLong,
       testDestination : this.props.navigation.state.params.testDestination,
+      testDest: '',
+      googleResponse: [],
 
       destinationLocation : [],
-      numberToCall : 112,
-      number: 1,
+      searchField: '',
 
       latitude: 59.326822,
       longitude: 18.071540,
+
 
       originLatitude: 59.326822,
       origionLongitude: 18.071540,
@@ -96,7 +99,7 @@ export default class Main extends Component {
 		};
 
 
-		this.mapView = null;
+		//this.mapView = null;
 	}
   favPlaces(){
 
@@ -114,6 +117,7 @@ export default class Main extends Component {
 
 
   componentDidMount() {
+    this.setState({testDest:this.props.navigation.state.params.testDest})
      navigator.geolocation.getCurrentPosition(
        (position) => {
          this.setState({
@@ -136,25 +140,39 @@ export default class Main extends Component {
            error: null,
          });
 
-             if(this.props.navigation.state.params.latitude !== undefined){
-               console.log("funka dåååå", this.props.navigation.state.params.latitude)
-               this.setState({
-                 testLat: this.props.navigation.state.params.latitude,
-                 testLat: this.props.navigation.state.params.longitude,
-             },
-           () => {
-             this.setState({
+         //TESTARRRRRRRRR AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M
+             if(this.props.navigation.state.params.testDest !== undefined){
+               var dontscrewup = 'https://maps.googleapis.com/maps/api/geocode/json?address=lidingö&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M';
+               var preLocation = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+               var postLocation = "&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M";
+               var decidedDestination = this.state.testDest;
+               var combined = preLocation + decidedDestination + postLocation;
+               console.log("nu så", preLocation + decidedDestination + postLocation )
+               return fetch(preLocation + decidedDestination + postLocation)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                  this.setState({
+                    googleResponse : responseJson,
 
-               coordinates: [
-                 {
-                   latitude: this.state.testLat,
-                   longitude: this.state.testLong,
-                 },
-               ]
+                  })
+                  this.setState({
+                    coordinates: [
+                      {
+                        latitude: this.state.googleResponse.results[0].geometry.location.lat,
+                        longitude: this.state.googleResponse.results[0].geometry.location.lng
+                      },
+                    ],
+                    // googleLat: this.state.googleResponse.results[0].geometry.location.lat,
+                    // googleLong: this.state.googleResponse.results[0].geometry.locatio.lng
+                  })
+
+                  console.log("deep shit", this.state.coordinates)
                 })
-              }
-           );
+                .catch((error) =>{
+                  console.error(error);
+                });
          }
+
 
 
        },
@@ -164,15 +182,7 @@ export default class Main extends Component {
 
      this.setState({
        username : this.props.navigation.state.params.username,
-       // console.log("1", this.props.navigation.state.params.username);
-       // console.log("2", this.params.username);
      })
-
-
-
-
-     //DETTA ÄR BARA FÖR ATT DATABASEN INTE SVARAR
-     //SKA KOMMENTERAS IN IGEN
 
      return fetch('https://pvt.dsv.su.se/Group08/getLamps?working=false')
       .then((response) => response.json())
@@ -208,7 +218,7 @@ export default class Main extends Component {
    routeName: 'favouritePlaces',
    key: 'favouritePlaces',
    params: {
-      username: this.state.username
+      destination: 'kista'
    }
  });
 
@@ -230,25 +240,32 @@ export default class Main extends Component {
 
 
  handleClickProfile = () => {
-   console.log("pre", this.state.coordinates)
-   this.setState({
-     coordinates: [
-       {
-         latitude: 555555,
-         longitude: 111111,
-       }
+   this.setState(
+{
+ destinationGoogle: 'kista'
 
-     ],
-   })
-   console.log("post", this.state.coordinates)
+ },
+ console.log("iclickpr" , this.state.destinationGoogle),
+() => {
+ this.navigate({
+ routeName: 'testmain',
+ key: 'testmain',
+ params: {
+   destinationGoogle: 'kista'
 
-     //this.props.navigation.navigate("login", testValue: item.testValue);
-
-   // this.props.navigation.navigate('testnavigation', {
-   //            itemId: 86,
-   //            otherParam: 'First Details',
-   //          });
+ },
+});
  }
+);
+ }
+
+ searchPlace(text, field){
+   this.setState({
+     searchField : text,
+   })
+   console.log(this.state.searchField)
+ }
+
 
  handleClick = () => {
    alert('Button clicked!');
@@ -271,6 +288,9 @@ export default class Main extends Component {
   })
 }).
   then((response) => {
+    if(response.ok === false){
+      console.log("no go")
+    }
     console.log('Done', response);
   });
 
@@ -343,13 +363,7 @@ export default class Main extends Component {
 
 
 	render() {
-    console.log("i render", this.state.coordinates)
-
-
-
-
-
-
+    //console.log("här", this.state.testDest)
 
     // if(street.length > 1){
       let panicMarker = street.map(panic => (
@@ -404,6 +418,7 @@ export default class Main extends Component {
     // ));
 
     //DEN FUNGERANDE
+    // för att slippa error
     let destination = this.state.coordinates.map(destination => (
       <MapViewDirections
       key={destination.latitude}
@@ -479,13 +494,15 @@ export default class Main extends Component {
          //{"här hade jag markers"}
 
 
-  			</MapView>
+  			</MapView>destinationInput
 
 
         <View style={styles.bottom}>
-        <TextInput style={styles.destinationInput}
-        onChangeText={(text) => this.setState({text})}
-        value={this.state.text}
+        <TextInput
+        value={this.state.searchField}
+        placeholder={"Hitta hit"} style ={styles.destinationInput}
+        onChangeText={text => this.searchPlace(text, 'searchField')}
+        />
 
 
       />

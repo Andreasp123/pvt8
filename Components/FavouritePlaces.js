@@ -25,6 +25,9 @@ export default class FavouritePlaces extends Component {
             testDestination: [],
             latitude: '',
             longitude: '',
+            testDest: '',
+            testLatitude: "",
+            testLongitude: "",
         };
     }
     componentDidMount() {
@@ -37,8 +40,21 @@ export default class FavouritePlaces extends Component {
         this.setState({ savedPlaces: this.state.savedPlaces });
         this.setState({shitText:''});
       }
-      console.log(this.state.savedPlaces)
-       }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.setState({
+            testLatitude: position.coords.latitude,
+            testLongitude: position.coords.longitude,
+
+          });
+
+        },
+
+        (error) => this.setState({ error: error.message }),
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      );
+
+   }
 
 
     render() {
@@ -135,29 +151,32 @@ let places = this.state.placeArray.map((val, key)=>{
     }
 
     findPlace(val){
+      console.log("print val", val.place)
       this.setState(
-  {
-    latitude: val.latitude,
-    longitude: val.longitude,
-    testDestination:[
+    {
+    // testLatitude: val.latitude,
+    // testLongitude: val.longitude,
+        testDest: val.place,
+        testDestination:[
       {
         latitude: val.latitude,
         longitude: val.longitude
       }
     ],
-    },
-  () => {
-    this.navigate({
-    routeName: 'main',
-    key: 'main',
-    params: {
-      testLat: this.state.latitude,
-      testLong: this.state.longitude
+  },
+        () => {
+          this.navigate({
+            routeName: 'main',
+            key: 'main',
+            params: {
+            testLat: this.state.testLatitude,
+            testLong: this.state.testLongitude,
+            testDest: this.state.testDest,
 
-    },
- });
-    }
-  );
+            },
+          });
+        }
+      );
     }
 }
 

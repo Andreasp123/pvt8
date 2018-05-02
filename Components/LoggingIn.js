@@ -31,7 +31,7 @@ export default class LoggingIn extends React.Component {
 
   signIn(){
         console.log("i logg", this.state.testLatitude )
-      if(this.state.username === undefined){
+      if(this.state.username === undefined){// || this.state.username == ''){
         alert("Username can't be empty")
       } else {
         console.log("username", this.state.username)

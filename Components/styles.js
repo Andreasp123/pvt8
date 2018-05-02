@@ -11,6 +11,7 @@ export default StyleSheet.create({
   top:{
     height: 85,
     backgroundColor: 'powderblue'
+    //backgroundColor: 'powderblue'
 
   },
   profileBtn:{
@@ -35,6 +36,7 @@ export default StyleSheet.create({
      right: 40,
      width: 25,
      height: 15,
+     backgroundColor:'transparent'
 
     },
     warning:{

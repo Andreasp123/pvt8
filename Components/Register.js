@@ -25,7 +25,7 @@ export default class Register extends React.Component {
   }
 
   register(){
-    if(this.state.username === undefined){
+    if(this.state.username !== 'undefined'){
       alert("Username can't be empty")
     } else {
       if(this.state.password === this.state.repeatedPassword){

@@ -6,9 +6,9 @@ import Login from './Components/Login';
 import FavouritePlaces from './Components/FavouritePlaces';
 import LoggingIn from './Components/LoggingIn';
 import favPlaces from './Components/FavPlaces';
-import Register from './Components/Register'
+import Register from './Components/Register';
 //import FavouritePlaces from './Components/FavouritePlaces';
-
+//import testMain from './Components/testMain';
 //import testnavigation from './Components/testnavigation';
 import StreetLamp from './Components/StreetLamp';
 import data from './Components/data';
@@ -21,6 +21,7 @@ const mainOptions = SwitchNavigator({
   favouritePlaces : FavouritePlaces,
   register : Register,
   loggingIn : LoggingIn,
+  //testmain : testMain,
 
 
 })
@@ -33,6 +34,7 @@ const SwNavigator = SwitchNavigator({
   //login : introStack,
   loggingIn : introStack,
   main : Main,
+  //testmain : testMain,
   favPlaces : favPlaces,
   favouritePlaces : FavouritePlaces,
   register : Register
