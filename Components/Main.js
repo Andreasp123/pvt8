@@ -277,18 +277,21 @@ export default class Main extends Component {
    fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
   method: 'POST',
   headers: {
-    //'Accept' : "application/json",
-    //'Content-Type': "application/json"},
-    'Accept': 'text/plain',
-    'Content-Type': 'text/plain'},
+    'Accept' : "application/json",
+    'Content-Type': "application/json"},
+    // 'Accept': 'text/plain',
+    // 'Content-Type': 'text/plain'},
   body: JSON.stringify({
-    latitude:'59.1111111',
+    "latitude": this.state.latitude,
+
     //latitude: this.state.originLatitude,
-    longitude: '59.2222222',
+    "longitude": this.state.longitude
+
   })
 }).
   then((response) => {
     if(response.ok === false){
+
       console.log("no go")
     }
     console.log('Done', response);
