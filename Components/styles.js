@@ -10,7 +10,8 @@ export default StyleSheet.create({
  },
   top:{
     height: 85,
-    backgroundColor: 'powderblue'
+    backgroundColor: 'powderblue',
+    alignItems:'center'
     //backgroundColor: 'powderblue'
 
   },
@@ -66,5 +67,16 @@ export default StyleSheet.create({
     position: 'absolute',
     borderColor: 'powderblue',
     borderWidth: 1
+  },
+  destinationInputTop:{
+    height: 50,
+    bottom: 10,
+    width: 100,
+    position: 'absolute',
+    borderColor: 'green',
+    borderWidth: 1,
+    marginLeft: 30 + "%",
+    marginRight: 30 + "%",
+
   },
   });

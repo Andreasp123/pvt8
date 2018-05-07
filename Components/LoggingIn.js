@@ -30,31 +30,98 @@ export default class LoggingIn extends React.Component {
   }
 
   signIn(){
-        console.log("i logg", this.state.testLatitude )
-      if(this.state.username === undefined){// || this.state.username == ''){
-        alert("Username can't be empty")
-      } else {
-        console.log("username", this.state.username)
 
-        this.navigate({
-        routeName: 'main',
-        key: 'main',
-        params: {
+         console.log("i logg", this.state.testLatitude )
 
-           username: this.state.username,
-           testLat: this.state.testLatitude,
-           testLong: this.state.testLongitude
-        }
-     });
+       if(this.state.username === undefined || this.state.username == ''){
 
-        // this.navigate("main", {
-        //   params: {
-        //   username: this.state.username,
-        //
-        //   }
-        // });
-    }
-  }
+         alert("Username can't be empty")
+
+       } else {
+
+         fetch('https://pvt.dsv.su.se/Group08/login', {
+
+        method: 'POST',
+
+        headers: {
+
+           'Accept': 'text/plain',
+
+          // 'Accept' : "application/json",
+
+          'Content-Type': "application/json"},
+
+          // 'Accept': 'text/plain',
+
+          // 'Content-Type': 'text/plain'},
+
+        body: JSON.stringify({
+
+          // "username": "testuser23",
+
+          "username": this.state.username,
+
+          "password": this.state.password
+
+          //latitude: this.state.originLatitude,
+
+          // "password": "testpass2"
+
+        })
+
+      }).
+
+        then((response) => {
+
+          console.log(response)
+
+          if(response.ok === false){
+
+            console.log("no go")
+
+          }
+
+          if(response.ok === true){
+
+            this.navigate({
+
+            routeName: 'main',
+
+            key: 'main',
+
+            params: {
+
+               username: this.state.username,
+
+               testLat: this.state.testLatitude,
+
+               testLong: this.state.testLongitude
+
+            }
+
+         });
+
+          }
+
+          console.log('Done', response);
+
+        });
+
+         // this.navigate("main", {
+
+         //   params: {
+
+         //   username: this.state.username,
+
+         //
+
+         //   }
+
+         // });
+
+     }
+
+   }
 
   register(){
     this.props.navigation.navigate("register")

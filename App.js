@@ -12,10 +12,11 @@ import Register from './Components/Register';
 //import testnavigation from './Components/testnavigation';
 import StreetLamp from './Components/StreetLamp';
 import data from './Components/data';
-import { SwitchNavigator,TabNavigator, StackNavigator  } from 'react-navigation';
+import { SwitchNavigator,TabNavigator, StackNavigator,createSwitchNavigator, createStackNavigator
+  } from 'react-navigation';
 //import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-native';
 
-const mainOptions = SwitchNavigator({
+const mainOptions = createSwitchNavigator({
   main : Main,
   favPlaces : favPlaces,
   favouritePlaces : FavouritePlaces,
@@ -25,12 +26,12 @@ const mainOptions = SwitchNavigator({
 
 
 })
-const introStack = StackNavigator({
+const introStack = createStackNavigator({
   loggingIn : LoggingIn,
   register : Register
 })
 
-const SwNavigator = SwitchNavigator({
+const SwNavigator = createSwitchNavigator({
   //login : introStack,
   loggingIn : introStack,
   main : Main,

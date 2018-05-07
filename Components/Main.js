@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
-  Alert, Platform, Communications, Linking, LoginButton, TouchableHighlight} from 'react-native';
+  Alert, Platform, Communications, Linking, LoginButton, TouchableHighlight,ExpandableView,
+  Animation, Animated, AnimatedRegion} from 'react-native';
+
 //import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
 import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-navigation';
 import { Constants, MapView } from 'expo';
@@ -59,6 +61,16 @@ export default class Main extends Component {
 		this.state = {
       username : this.props.navigation.state.params.username,
 
+      friendToMeet: [
+        {
+        latitude:59.335493,
+        longitude:18.085179
+        }
+      ],
+
+
+
+
       testLat:this.props.navigation.state.params.testLat,
       testLong:this.props.navigation.state.params.testLong,
       testDestination : this.props.navigation.state.params.testDestination,
@@ -90,11 +102,12 @@ export default class Main extends Component {
       panicLocation: [],
 
 			coordinates: [
+        {
+        latitude: this.props.navigation.state.params.testLat,
+        longitude: this.props.navigation.state.params.testLong,
+        }
 
-				{
-          latitude: this.props.navigation.state.params.testLat,
-					longitude: this.props.navigation.state.params.testLong,
-				},
+
 			],
 		};
 
@@ -114,10 +127,18 @@ export default class Main extends Component {
     // this.props.navigation.navigate("favPlaces")
   }
 
+  testAlert(){
+    alert("detta funkar också")
+  }
+
+
+
 
 
   componentDidMount() {
+
     this.setState({testDest:this.props.navigation.state.params.testDest})
+
      navigator.geolocation.getCurrentPosition(
        (position) => {
          this.setState({
@@ -142,6 +163,7 @@ export default class Main extends Component {
 
          //TESTARRRRRRRRR AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M
              if(this.props.navigation.state.params.testDest !== undefined){
+
                var dontscrewup = 'https://maps.googleapis.com/maps/api/geocode/json?address=lidingö&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M';
                var preLocation = "https://maps.googleapis.com/maps/api/geocode/json?address=";
                var postLocation = "&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M";
@@ -173,8 +195,6 @@ export default class Main extends Component {
                 });
          }
 
-
-
        },
        (error) => this.setState({ error: error.message }),
        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
@@ -188,27 +208,46 @@ export default class Main extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({data : responseJson})
-        let markers = responseJson.map(lamps => (
-             <MapView.Marker
-             key={lamps.name}
-             coordinate={{
-             latitude: lamps.lat,
-             longitude: lamps.lng,
-
-
+        let circles = responseJson.map(circle => (
+             <MapView.Circle
+             key={circle.name}
+             center={{
+             latitude: circle.lat,
+             longitude: circle.lng,
            }}
-           image={doge}
-           title={lamps.name}
-           description={lamps.name}
+           radius={3}
+           strokeWidth = { 1 }
+           strokeColor = { '#1a66ff' }
+           fillColor = { '#1a66ff' }
+           animation = {Animated.bounce}
            />
+
+
         ));
           this.setState({
-            dataSource : markers,
+            dataSource : circles,
           });
       })
       .catch((error) =>{
         console.error(error);
       });
+
+      // testar ta bort denna
+      // let destination = this.state.coordinates.map(destination => (
+      //   <MapViewDirections
+      //   key={destination.latitude}
+      //     origin={this.state.origin[0]}
+      //     //origin={this.state.origin}
+      //     destination={this.state.coordinates[0]}
+      //     apikey={GOOGLE_MAPS_APIKEY}
+      //     strokeWidth={3}
+      //     strokeColor="hotpink"
+      //     onReady={this.onReady}
+      //     onError={this.onError}
+      //   />
+      //
+      // ));
+
 
 
  }
@@ -232,6 +271,8 @@ export default class Main extends Component {
 // });
 
      // this.props.navigation.navigate("favPlaces");
+
+
 
  }
 
@@ -365,24 +406,29 @@ export default class Main extends Component {
 
 
 
+
+
 	render() {
     //console.log("här", this.state.testDest)
 
     // if(street.length > 1){
       let panicMarker = street.map(panic => (
 
-           <MapView.Marker
+           <MapView.Marker.Animated
            key={panic.name}
            coordinate={{
            latitude: panic.lat,
            longitude: panic.lng,
+           setAnimation: Animated.BOUNCE,
          }}
-         image={warning}
+         setAnimation={Animated.BOUNCE}
+         //image={warning}
 
          />
 
       ));
     // }
+
 
 
     // let markers = data.map(lamps => (
@@ -436,12 +482,35 @@ export default class Main extends Component {
       />
 
     ));
+
+    let meetUp = this.state.coordinates.map(destination => (
+      <MapViewDirections
+      key={destination.latitude}
+        origin={this.state.friendToMeet[0]}
+        //origin={this.state.origin}
+        destination={this.state.coordinates[0]}
+        apikey={GOOGLE_MAPS_APIKEY}
+        strokeWidth={3}
+        strokeColor="green"
+        onReady={this.onReady}
+        onError={this.onError}
+      />
+
+    ));
+
+
 		return (
 
       <View style= {styles.container}>
 
 
-      <View style={styles.top}>
+    <View style={styles.top}>
+    <TextInput
+    value={this.state.searchField}
+    placeholder={"Hitta hit"} style ={styles.destinationInputTop}
+    onChangeText={text => this.searchPlace(text, 'searchField')}
+    />
+
 
       <TouchableOpacity style={styles.profileBtn} onPress={()=>{
         console.log("klickar")
@@ -461,7 +530,12 @@ export default class Main extends Component {
             />
           </TouchableOpacity>
 
-      </View>
+
+
+        </View>
+      //var tvungen att logga för att bli av med
+
+
 
   			  <MapView style={styles.map}
   				initialRegion={{
@@ -480,8 +554,13 @@ export default class Main extends Component {
   			>
         //DETTA ÄR BARA FÖR ATT DATABASEN INTE SVARAR
         //SKA KOMMENTERAS IN IGEN
-        {destination}
+        //{destination}
+
         {panicMarker}
+        {meetUp}
+
+
+
 
 
 
@@ -497,7 +576,8 @@ export default class Main extends Component {
          //{"här hade jag markers"}
 
 
-  			</MapView>destinationInput
+  			</MapView>
+
 
 
         <View style={styles.bottom}>
