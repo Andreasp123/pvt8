@@ -137,7 +137,7 @@ export default class Main extends Component {
   }
 
   aTestData(){
-    console.log("kom vi hit")
+
     return fetch('https://pvt.dsv.su.se/Group08/getRoute?name=Frutunnelbana')
      .then((response) => response.json())
      .then((responseJson) => {
@@ -225,7 +225,7 @@ export default class Main extends Component {
                     // googleLong: this.state.googleResponse.results[0].geometry.locatio.lng
                   })
 
-                  console.log("deep shit", this.state.coordinates)
+
                 })
                 .catch((error) =>{
                   console.error(error);
@@ -330,7 +330,7 @@ export default class Main extends Component {
  destinationGoogle: 'kista'
 
  },
- console.log("iclickpr" , this.state.destinationGoogle),
+ //console.log("iclickpr" , this.state.destinationGoogle),
 () => {
  this.navigate({
  routeName: 'testmain',
@@ -348,7 +348,7 @@ export default class Main extends Component {
    this.setState({
      searchField : text,
    })
-   console.log(this.state.searchField)
+   //console.log(this.state.searchField)
  }
 
 
@@ -379,7 +379,7 @@ export default class Main extends Component {
 
       console.log("no go")
     }
-    console.log('Done', response);
+    //console.log('Done', response);
   });
 
   //  fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
@@ -603,6 +603,8 @@ export default class Main extends Component {
 
 
   			  <MapView style={styles.map}
+          provider = { MapView.PROVIDER_GOOGLE }
+            customMapStyle = { generatedMapStyle }
   				initialRegion={{
             latitude:this.state.testLat,
             longitude:this.state.testLong,
@@ -666,7 +668,7 @@ export default class Main extends Component {
 	}
 }
 
-const generatedMapStyle = [[
+const generatedMapStyle = [
   {
     "elementType": "geometry",
     "stylers": [
@@ -898,7 +900,7 @@ const generatedMapStyle = [[
       }
     ]
   }
-]]
+]
 
 // const styles = StyleSheet.create({
 //   container: {
