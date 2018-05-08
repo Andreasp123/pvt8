@@ -6,7 +6,8 @@ import { StyleSheet, Text, View, TextInput, Scrollview,
 
 //import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
 import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-navigation';
-import { Constants, MapView } from 'expo';
+import { Constants  } from 'expo';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import styles from './styles';
 import doge from './doge.jpeg';
 import warning from './warning.jpg';
@@ -71,6 +72,8 @@ export default class Main extends Component {
 
 
 
+
+
       testLat:this.props.navigation.state.params.testLat,
       testLong:this.props.navigation.state.params.testLong,
       testDestination : this.props.navigation.state.params.testDestination,
@@ -87,6 +90,8 @@ export default class Main extends Component {
       originLatitude: 59.326822,
       origionLongitude: 18.071540,
       dataSource:[],
+
+      adamData:[],
       markTest:[],
       testValue: 'hejsan',
 
@@ -131,11 +136,43 @@ export default class Main extends Component {
     alert("detta funkar också")
   }
 
+  aTestData(){
+    console.log("kom vi hit")
+    return fetch('https://pvt.dsv.su.se/Group08/getRoute?name=Frutunnelbana')
+     .then((response) => response.json())
+     .then((responseJson) => {
+       this.setState({testData : responseJson})
+       let testAdam1 = responseJson.map(circle => (
+            <MapView.Circle
+            key={circle.id}
+            center={{
+            latitude: circle.lat,
+            longitude: circle.lng,
+          }}
+          radius={3}
+          strokeWidth = { 1 }
+          strokeColor = { '#1a66ff' }
+          fillColor = { '#1a66ff' }
+          animation = {Animated.bounce}
+          />
+
+
+       ));
+         this.setState({
+           adamData : testAdam1,
+         });
+     })
+     .catch((error) =>{
+       console.error(error);
+     });
+  }
+
 
 
 
 
   componentDidMount() {
+    this.aTestData()
 
     this.setState({testDest:this.props.navigation.state.params.testDest})
 
@@ -232,6 +269,11 @@ export default class Main extends Component {
         console.error(error);
       });
 
+
+      //adam
+
+
+
       // testar ta bort denna
       // let destination = this.state.coordinates.map(destination => (
       //   <MapViewDirections
@@ -247,6 +289,8 @@ export default class Main extends Component {
       //   />
       //
       // ));
+
+
 
 
 
@@ -409,6 +453,24 @@ export default class Main extends Component {
 
 
 	render() {
+    console.log(this.state.adamData)
+
+//     let testAdam = adamsTest.map(circles => (
+//   <MapView.Circle.Animated
+//   key={circles.lat}
+//   center={{
+//     latitude: circles.lat,
+//     longitude: circles.lng
+//   }}
+//   radius={10}
+//   strokeWidth = { 1 }
+//   strokeColor = { '#1a66ff' }
+//   fillColor = { '#1a66ff' }
+//   />
+//
+//
+// ));
+
     //console.log("här", this.state.testDest)
 
     // if(street.length > 1){
@@ -428,6 +490,8 @@ export default class Main extends Component {
 
       ));
     // }
+
+
 
 
 
@@ -501,6 +565,7 @@ export default class Main extends Component {
 
 		return (
 
+
       <View style= {styles.container}>
 
 
@@ -544,8 +609,11 @@ export default class Main extends Component {
             // latitude:this.state.latitude,
             // longitude:this.state.longitude,
             latitudeDelta: 0.043,
-            longitudeDelta: 0.034
+            longitudeDelta: 0.034,
+
+
   				}}
+
 
 
   				ref={c => this.mapView = c}
@@ -556,17 +624,9 @@ export default class Main extends Component {
         //SKA KOMMENTERAS IN IGEN
         //{destination}
 
-        {panicMarker}
-        {meetUp}
 
 
-
-
-
-
-
-
-
+        {this.state.adamData}
         {this.state.dataSource}
 
         // "här låg det som ligger under 111111 i fungerande med markers "
@@ -605,6 +665,240 @@ export default class Main extends Component {
 		);
 	}
 }
+
+const generatedMapStyle = [[
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#1d2c4d"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#8ec3b9"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#1a3646"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.country",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#4b6878"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#64779e"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.province",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#4b6878"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.man_made",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#334e87"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.natural",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#023e58"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#283d6a"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#6f9ba5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#1d2c4d"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#023e58"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#3C7680"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#304a7d"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#98a5be"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#1d2c4d"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#2c6675"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#255763"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#b0d5ce"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#023e58"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#98a5be"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#1d2c4d"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#283d6a"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#3a4762"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#0e1626"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#4e6d70"
+      }
+    ]
+  }
+]]
 
 // const styles = StyleSheet.create({
 //   container: {

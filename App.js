@@ -32,8 +32,8 @@ const introStack = createStackNavigator({
 })
 
 const SwNavigator = createSwitchNavigator({
-  //login : introStack,
-  loggingIn : introStack,
+  
+  loggingIn : introStack, // denna ska ligga överst
   main : Main,
   //testmain : testMain,
   favPlaces : favPlaces,
