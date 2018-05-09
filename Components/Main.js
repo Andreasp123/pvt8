@@ -90,8 +90,7 @@ export default class Main extends Component {
       markTest:[],
       testValue: 'hejsan',
       panicData:[],
-
-
+      animatedTop: new Animated.Value(0),
       error: null,
       origin: [
         {
@@ -164,7 +163,7 @@ export default class Main extends Component {
   }
 
   fetchPanicLocations(){
-    console.log("i fetch")
+
     return fetch('https://pvt.dsv.su.se/Group08/getPanicLocations')
      .then((response) => response.json())
      .then((responseJson) => {
@@ -187,6 +186,10 @@ export default class Main extends Component {
   componentDidMount() {
     this.aTestData()
     this.fetchPanicLocations()
+    Animated.timing(this.state.animatedTop, {
+    toValue: 200, // position where you want the component to end up
+    duration: 400 // time the animation will take to complete, in ms
+  }).start()
 
     this.setState({testDest:this.props.navigation.state.params.testDest})
 
@@ -480,18 +483,30 @@ export default class Main extends Component {
     // if(street.length > 1){
       let panicMarker = this.state.panicData.map(panic => (
 
-           <MapView.Marker
-           key={panic.id}
-           coordinate={{
-           latitude: panic.lat,
-           longitude: panic.lng,
+        <MapView.Circle
+        key={panic.id}
+        center={{
+        latitude: panic.lat,
+        longitude: panic.lng,
 
-         }}
+      }}
+      radius={8}
+      strokeWidth = { 1 }
+      strokeColor = { 'red' }
+      fillColor = { 'red' }
 
+      />
+
+
+         //   <MapView.Marker
+         //   key={panic.id}
+         //   coordinate={{
+         //   latitude: panic.lat,
+         //   longitude: panic.lng,
+         //
+         // }}
          //image={warning}
-
-         />
-
+         // />
       ));
     // }
 
@@ -634,7 +649,11 @@ export default class Main extends Component {
 
         {this.state.adamData}
         {this.state.dataSource}
+        
         {panicMarker}
+
+
+
 
         // "här låg det som ligger under 111111 i fungerande med markers "
 
