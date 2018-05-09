@@ -45,7 +45,7 @@ export default class LoggingIn extends React.Component {
 
         headers: {
 
-           'Accept': 'text/plain',
+           'Accept': 'application/json',
 
           // 'Accept' : "application/json",
 
@@ -57,15 +57,15 @@ export default class LoggingIn extends React.Component {
 
         body: JSON.stringify({
 
-          // "username": "testuser23",
+           "username": "testuser23",
 
-          "username": this.state.username,
-
-          "password": this.state.password
+          // "username": this.state.username,
+          //
+          // "password": this.state.password
 
           //latitude: this.state.originLatitude,
 
-          // "password": "testpass2"
+           "password": "testpass2"
 
         })
 
@@ -75,31 +75,33 @@ export default class LoggingIn extends React.Component {
 
           console.log(response)
 
-          if(response.ok === false){
 
-            console.log("no go")
+          if(response.ok){
+            response.json().then(json =>{
+              if(json.Login === true){
+                console.log("det funkar")
+                this.navigate({
 
-          }
+                routeName: 'main',
 
-          if(response.ok === true){
+                key: 'main',
 
-            this.navigate({
+                params: {
 
-            routeName: 'main',
+                   username: this.state.username,
 
-            key: 'main',
+                   testLat: this.state.testLatitude,
 
-            params: {
+                   testLong: this.state.testLongitude
 
-               username: this.state.username,
+                }
 
-               testLat: this.state.testLatitude,
+             });
+              }
 
-               testLong: this.state.testLongitude
+            })
 
-            }
 
-         });
 
           }
 
