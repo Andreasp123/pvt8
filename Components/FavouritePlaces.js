@@ -21,6 +21,7 @@ export default class FavouritePlaces extends Component {
             placeArray: [],
             placeText: '',
             testArray: testdata,
+            myArray: [],
             savedPlaces: [],
             testDestination: [],
             latitude: '',
@@ -30,7 +31,36 @@ export default class FavouritePlaces extends Component {
             testLongitude: "",
         };
     }
+
+    fetchPlaces(){
+      console.log("testdata", testdata)
+      return fetch('https://pvt.dsv.su.se/Group08/getPlaces?username=andreas')
+       .then((response) => response.json())
+       .then((responseJson) => {
+         console.log("res", responseJson)
+         this.setState({
+           myArray : responseJson,
+
+         })
+         this.setState({
+           myArray:responseJson
+           // googleLat: this.state.googleResponse.results[0].geometry.location.lat,
+           // googleLong: this.state.googleResponse.results[0].geometry.locatio.lng
+         })
+         console.log("myarray", this.state.myArray)
+
+       })
+       .catch((error) =>{
+         console.error(error);
+       });
+
+    }
+
     componentDidMount() {
+      this.fetchPlaces()
+      console.log("bröl?")
+
+
       for(var i = 0; i < testdata.length; i++){
         this.state.savedPlaces.push({
           'place': testdata[i].val,
@@ -125,15 +155,7 @@ let places = this.state.placeArray.map((val, key)=>{
         );
     }
 
-    addTest(){
-      for(var i = 0; i < testdata.length; i++){
-        this.state.savedPlaces.push({
-          'place': testdata[i]
-        });
-        this.setState({ savedPlaces: this.state.savedPlaces });
-        this.setState({shitText:''});
-      }
-    }
+
 
     addPlace(){
         if(this.state.placeText){

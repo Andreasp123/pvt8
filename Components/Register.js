@@ -17,6 +17,7 @@ export default class Register extends React.Component {
         username: "",
         password:"",
         repeatedPassword: "",
+        email: "",
       }
     }
   }
@@ -25,17 +26,61 @@ export default class Register extends React.Component {
   }
 
   register(){
-    if(this.state.username !== 'undefined'){
+    if(this.state.username === 'undefined'){
       alert("Username can't be empty")
     } else {
-      if(this.state.password === this.state.repeatedPassword){
+      //if(this.state.password === this.state.repeatedPassword){
+        fetch('https://pvt.dsv.su.se/Group08/registerUser', {
+
+       method: 'POST',
+
+       headers: {
+
+          'Accept': 'application/json',
+
+         // 'Accept' : "application/json",
+
+         'Content-Type': "application/json"},
+
+         // 'Accept': 'text/plain',
+
+         // 'Content-Type': 'text/plain'},
+
+       body: JSON.stringify({
+
+          "username": this.state.username,
+
+         // "username": this.state.username,
+         //
+         // "password": this.state.password
+
+         //latitude: this.state.originLatitude,
+
+          "password": this.state.password,
+          "email": this.state.email,
+       })
+     }).
+       then((response) => {
+         //console.log(response)
+
+         if(response.ok){
+           response.json().then(json =>{
+             console.log(json)
+             if(json.Register === true){
+               console.log("det funkar")
+               this.props.navigation.navigate("loggingIn")
+             }
+           })
+         }
+         console.log('Done', response);
+       });
 
         //call mot databas för att se om användarnamnet är taget
         //if(!taken){
-          this.props.navigation.navigate("loggingIn")
+
         //}
 
-      }
+      //}
     }
 
   }
@@ -56,6 +101,11 @@ export default class Register extends React.Component {
       repeatedPassword : text,
     })
   }
+  updateEmailText(text){
+    this.setState({
+      email : text,
+    })
+  }
 
   render() {
     return(
@@ -74,9 +124,9 @@ export default class Register extends React.Component {
       />
 
       <TextInput
-      secureTextEntry
-      placeholder={"Repeat password"} style ={styles.input}
-      onChangeText={text => this.repeatPasswordText(text, 'repeatedPassword')}
+      
+      placeholder={"Email"} style ={styles.input}
+      onChangeText={text => this.updateEmailText(text, 'email')}
       />
 
       <Button

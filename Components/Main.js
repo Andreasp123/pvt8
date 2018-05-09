@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
   Alert, Platform, Communications, Linking, LoginButton, TouchableHighlight,ExpandableView,
-  Animation, Animated, AnimatedRegion} from 'react-native';
+  Animation, Animated, AnimatedRegion, prompt, AlertIOS} from 'react-native';
 
 //import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
 import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-navigation';
@@ -69,11 +69,6 @@ export default class Main extends Component {
         }
       ],
 
-
-
-
-
-
       testLat:this.props.navigation.state.params.testLat,
       testLong:this.props.navigation.state.params.testLong,
       testDestination : this.props.navigation.state.params.testDestination,
@@ -94,6 +89,7 @@ export default class Main extends Component {
       adamData:[],
       markTest:[],
       testValue: 'hejsan',
+      panicData:[],
 
 
       error: null,
@@ -167,12 +163,30 @@ export default class Main extends Component {
      });
   }
 
+  fetchPanicLocations(){
+    console.log("i fetch")
+    return fetch('https://pvt.dsv.su.se/Group08/getPanicLocations')
+     .then((response) => response.json())
+     .then((responseJson) => {
+       this.setState({panicData : responseJson})
+       //console.log(this.state.panicData)
 
 
 
+
+         // this.setState({
+         //   adamData : testAdam1,
+         // });
+     })
+     console.log("response igen", responseJson)
+     .catch((error) =>{
+       console.error(error);
+     });
+  }
 
   componentDidMount() {
     this.aTestData()
+    this.fetchPanicLocations()
 
     this.setState({testDest:this.props.navigation.state.params.testDest})
 
@@ -206,7 +220,7 @@ export default class Main extends Component {
                var postLocation = "&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M";
                var decidedDestination = this.state.testDest;
                var combined = preLocation + decidedDestination + postLocation;
-               console.log("nu så", preLocation + decidedDestination + postLocation )
+               //console.log("nu så", preLocation + decidedDestination + postLocation )
                return fetch(preLocation + decidedDestination + postLocation)
                 .then((response) => response.json())
                 .then((responseJson) => {
@@ -325,22 +339,21 @@ export default class Main extends Component {
 
 
  handleClickProfile = () => {
-   this.setState(
-{
- destinationGoogle: 'kista'
+   AlertIOS.prompt(
+  'Rapportera otrygg händelse',
+  'Vad har hänt?',
+  [
+    {
+      text: 'Cancel',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel',
+    },
+    {
+      text: 'OK',
+      onPress: (Händelse) => console.log('OK Pressed, händelse: ' + händelse),
+    },
+  ],
 
- },
- //console.log("iclickpr" , this.state.destinationGoogle),
-() => {
- this.navigate({
- routeName: 'testmain',
- key: 'testmain',
- params: {
-   destinationGoogle: 'kista'
-
- },
-});
- }
 );
  }
 
@@ -382,18 +395,7 @@ export default class Main extends Component {
     //console.log('Done', response);
   });
 
-  //  fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
-  // method: 'POST',
-  // headers: {
-  //   Accept: 'text/plain',
-  //   Content-Type: 'text/plain',
-  // },
-  // body: JSON.stringify({
-  //   id: "25",
-  //   latitude: '59.111111',
-  //   longitude: '59.222222',
-  // }),
-  // });
+
 
    var ring = false
    Alert.alert(
@@ -402,7 +404,7 @@ export default class Main extends Component {
   [
 
     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel', },
-    {text: 'OK', onPress: () => console.log('OK Pressed',ring: true)},
+    {text: 'OK', onPress: () => console.log('OK Pressed', ring: true)},
   ],
   { cancelable: false }
 )
@@ -453,7 +455,9 @@ export default class Main extends Component {
 
 
 	render() {
-    console.log(this.state.adamData)
+    this.fetchPanicLocations()
+
+    //console.log(this.state.adamData)
 
 //     let testAdam = adamsTest.map(circles => (
 //   <MapView.Circle.Animated
@@ -474,16 +478,16 @@ export default class Main extends Component {
     //console.log("här", this.state.testDest)
 
     // if(street.length > 1){
-      let panicMarker = street.map(panic => (
+      let panicMarker = this.state.panicData.map(panic => (
 
-           <MapView.Marker.Animated
-           key={panic.name}
+           <MapView.Marker
+           key={panic.id}
            coordinate={{
            latitude: panic.lat,
            longitude: panic.lng,
-           setAnimation: Animated.BOUNCE,
+
          }}
-         setAnimation={Animated.BOUNCE}
+
          //image={warning}
 
          />
@@ -630,6 +634,7 @@ export default class Main extends Component {
 
         {this.state.adamData}
         {this.state.dataSource}
+        {panicMarker}
 
         // "här låg det som ligger under 111111 i fungerande med markers "
 

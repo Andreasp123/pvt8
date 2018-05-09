@@ -40,21 +40,13 @@ export default class LoggingIn extends React.Component {
        } else {
 
          fetch('https://pvt.dsv.su.se/Group08/login', {
-
         method: 'POST',
-
         headers: {
-
            'Accept': 'application/json',
-
           // 'Accept' : "application/json",
-
           'Content-Type': "application/json"},
-
           // 'Accept': 'text/plain',
-
           // 'Content-Type': 'text/plain'},
-
         body: JSON.stringify({
 
            "username": "testuser23",
@@ -66,46 +58,29 @@ export default class LoggingIn extends React.Component {
           //latitude: this.state.originLatitude,
 
            "password": "testpass2"
-
         })
-
       }).
-
         then((response) => {
-
-          console.log(response)
-
 
           if(response.ok){
             response.json().then(json =>{
               if(json.Login === true){
-                console.log("det funkar")
+                //console.log("det funkar")
                 this.navigate({
-
                 routeName: 'main',
-
                 key: 'main',
-
                 params: {
-
                    username: this.state.username,
-
                    testLat: this.state.testLatitude,
-
                    testLong: this.state.testLongitude
-
                 }
-
              });
               }
-
             })
-
-
 
           }
 
-          console.log('Done', response);
+          //console.log('Done', response);
 
         });
 
