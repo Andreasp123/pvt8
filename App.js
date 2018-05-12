@@ -7,6 +7,7 @@ import FavouritePlaces from './Components/FavouritePlaces';
 import LoggingIn from './Components/LoggingIn';
 import favPlaces from './Components/FavPlaces';
 import Register from './Components/Register';
+import Profile from './Components/Profile';
 //import FavouritePlaces from './Components/FavouritePlaces';
 //import testMain from './Components/testMain';
 //import testnavigation from './Components/testnavigation';
@@ -32,7 +33,7 @@ const introStack = createStackNavigator({
 })
 
 const SwNavigator = createSwitchNavigator({
-  
+
   loggingIn : introStack, // denna ska ligga överst
   main : Main,
   //testmain : testMain,

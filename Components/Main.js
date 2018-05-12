@@ -38,19 +38,7 @@ const requestCoordinates = 'AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M'
 //const myjsonstring = 'https://pvt.dsv.su.se/Group08/getLamps?working=false';
 
 export default class Main extends Component {
-  // profile(){
-  //   this.props.navigation.navigate("login");
-  // }
 
-  // register(){
-  //
-  //   this.props.navigation.navigate("register")
-  // }
-
-
-
-  // rad 89-113 ska kommenteras in igen när DB fungerar
-  // även rad 255
 
 	constructor(props) {
 		super(props);
@@ -74,6 +62,7 @@ export default class Main extends Component {
       testDestination : this.props.navigation.state.params.testDestination,
       testDest: '',
       googleResponse: [],
+      userReport: '',
 
       destinationLocation : [],
       searchField: '',
@@ -333,14 +322,21 @@ export default class Main extends Component {
 
      // this.props.navigation.navigate("favPlaces");
 
-
-
  }
 
 
 
+//denna ska tas bort härifrån, finns i profile
+setUserReport(report){
+  console.log("här ens?")
+  this.setState({
+    userReport: report
+  })
+  console.log(this.state.userReport)
+}
 
-
+//denna koden är endast tillagd på profile för att det var den enda knappen som fetchPanicLocations
+//ska bytas ut, koden finns i profile
  handleClickProfile = () => {
    AlertIOS.prompt(
   'Rapportera otrygg händelse',
@@ -352,12 +348,10 @@ export default class Main extends Component {
       style: 'cancel',
     },
     {
-      text: 'OK',
-      onPress: (Händelse) => console.log('OK Pressed, händelse: ' + händelse),
+      text: 'OK', onPress: this.setUserReport.bind(this),
     },
   ],
-
-);
+  );
  }
 
  searchPlace(text, field){
@@ -373,8 +367,6 @@ export default class Main extends Component {
  }
 
  handleClickPanic = () => {
-
-
    fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
   method: 'POST',
   headers: {
@@ -397,15 +389,11 @@ export default class Main extends Component {
     }
     //console.log('Done', response);
   });
-
-
-
    var ring = false
    Alert.alert(
   'SKRIK OCH PANIK',
   'Är du säker?',
   [
-
     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel', },
     {text: 'OK', onPress: () => console.log('OK Pressed', ring: true)},
   ],
@@ -649,7 +637,7 @@ export default class Main extends Component {
 
         {this.state.adamData}
         {this.state.dataSource}
-        
+
         {panicMarker}
 
 
