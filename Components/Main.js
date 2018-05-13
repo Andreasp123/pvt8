@@ -63,6 +63,7 @@ export default class Main extends Component {
       testDest: '',
       googleResponse: [],
       userReport: '',
+      friendRequests: [],
 
       destinationLocation : [],
       searchField: '',
@@ -105,7 +106,6 @@ export default class Main extends Component {
 	}
   favPlaces(){
 
-
     this.navigate({
     routeName: 'favPlaces',
     key: 'favPlaces',
@@ -119,6 +119,73 @@ export default class Main extends Component {
   testAlert(){
     alert("detta funkar också")
   }
+
+  //Ny, Hampus
+  checkFriendRequests(){
+    fetch('https://pvt.dsv.su.se/Group08/getFriendRequests', {
+   method: 'POST',
+   headers: {
+     'Accept' : "application/json",
+     'Content-Type': "application/json"},
+     // 'Accept': 'text/plain',
+     // 'Content-Type': 'text/plain'},
+   body: JSON.stringify({
+     "username": this.state.username,
+   })
+ }).
+ then((response) => {
+   if(response.ok){
+     response.json().then(json =>{
+       this.setState({
+         friendRequests : json,
+         friendsName: json.username
+       })
+
+       if(friendRequests !== undefined){
+         acceptFriendRequest(friendsName)
+       }
+     })
+
+   }
+
+  });
+}
+//Hjälpmetod till checkFriendRequests
+acceptFriendRequest(friendsName){
+    Alert.alert(
+      friendsName + ' vill lägga till dig som vän',
+      [
+        {text: 'Avböj', onPress: () => console.log('Cancel Pressed'), style: 'cancel',
+      },
+      {text: 'Acceptera', onPress: () => this.confirmFriendRequest.bind(this), style: 'acceptera'},
+
+    ],
+      { cancelable: false }
+    )
+  }
+  //hjälpmetod till acceptFriendRequest
+confirmFriendRequest(){
+  fetch('https://pvt.dsv.su.se/Group08/confirmFriendRequest', {
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+   // 'Accept' : "application/json",
+   'Content-Type': "application/json"},
+   // 'Accept': 'text/plain',
+   // 'Content-Type': 'text/plain'},
+  body: JSON.stringify({
+
+    "username_sender": this.state.username,
+    "username_receiver": this.state.friendsName
+  })
+  }).
+  then((response) => {
+   if(response.ok){
+     console.log(response)
+   }
+   //console.log('Done', response);
+  });
+}
 
   aTestData(){
 

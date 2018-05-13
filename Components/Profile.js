@@ -1,10 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, NavigatorIOS, Button,
+import { StyleSheet, Text, View, NavigatorIOS, Button, Alert, Prompt, prompt, AlertIOS
  } from 'react-native';
 
-//import FavouritePlaces from './Components/FavouritePlaces';
-//import testMain from './Components/testMain';
-//import testnavigation from './Components/testnavigation';
 
 import { SwitchNavigator,TabNavigator, StackNavigator,createSwitchNavigator, createStackNavigator
   } from 'react-navigation';
@@ -23,8 +20,8 @@ export default class Profile extends React.Component {
 
       shareGPS: false,
       shareLocation : 'Dela min plats',
-      händelse : '',
       userReport: '',
+      newFriend: '',
 
     }
   }
@@ -43,14 +40,7 @@ export default class Profile extends React.Component {
     }
   }
 
-//hjälpmetod till reportEvent för att kunna hämta ut värdet användaren skriver in
-  setUserReport(report){
-    console.log("här ens?")
-    this.setState({
-      userReport: report
-    })
-    console.log(this.state.userReport)
-  }
+
 
 //användarrapport, otrygg händelse
   reportEvent(){
@@ -60,14 +50,73 @@ export default class Profile extends React.Component {
    'Vad har hänt?',
    [
      {
-       text: 'Cancel',
-       onPress: () => console.log('Cancel Pressed'), style: 'cancel',
+       text: 'Avbryt',
+       onPress: () => console.log('Cancel Pressed'), style: 'Avbryt',
+       //Skulle det crascha här så byt ut text och style från avbryt till cancel
      },
      {
-       text: 'OK', onPress: this.setUserReport.bind(this),
+       text: 'Rapportera', onPress: this.setUserReport.bind(this),
      },
    ],
    );
+  }
+  //hjälpmetod till reportEvent för att kunna hämta ut värdet användaren skriver in
+  //glöm inte att skicka iväg till databasen när endpointen är uppe
+    setUserReport(report){
+      this.setState({
+        userReport: report
+      })
+      console.log(this.state.userReport)
+    }
+
+//Hjälpmetod till addFriend
+//måste calla databasen
+
+  //lägga till en vän
+  addFriend(){
+    AlertIOS.prompt(
+   'Lägg till vän',
+   'Användarnamn:',
+   [{
+       text: 'Avbryt',
+       onPress: () => console.log('Cancel Pressed'), style: 'cancel',
+     },
+     {
+       text: 'OK', onPress: this.setNewFriend.bind(this),
+     },
+   ],
+   );
+  }
+  //hjälpmetod till addfriend
+  setNewFriend(newFriend){
+    this.setState({
+      newFriend: newFriend
+    })
+    fetch('https://pvt.dsv.su.se/Group08/friendRequest', {
+   method: 'POST',
+   headers: {
+     'Accept' : "application/json",
+     'Content-Type': "application/json"},
+     // 'Accept': 'text/plain',
+     // 'Content-Type': 'text/plain'},
+   body: JSON.stringify({
+     "username_sender": this.state.username,
+     "username_receiver": this.state.newFriend
+
+   })
+ }).
+   then((response) => {
+     if(response.ok === false){
+       console.log("no go")
+     }else{
+       'Vänförfrågan skickad',
+       [
+         {text: 'OK', onPress: () => console.log('OK Pressed')},
+       ],
+       { cancelable: false }
+     }
+     //console.log('Done', response);
+   });
   }
 
   exitProfileBtn(){
