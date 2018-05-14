@@ -132,7 +132,7 @@ export default class Main extends Component {
      // 'Accept': 'text/plain',
      // 'Content-Type': 'text/plain'},
    body: JSON.stringify({
-     "username": "user1",
+     "username": this.state.username
    })
  }).
  then((response) => {
@@ -427,19 +427,66 @@ setUserReport(report){
 //ska bytas ut, koden finns i profile
  handleClickProfile = () => {
    AlertIOS.prompt(
-  'Rapportera otrygg händelse',
-  'Vad har hänt?',
-  [
-    {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel',
+  'Lägg till vän',
+  'Användarnamn:',
+  [{
+      text: 'Avbryt',
+      onPress: () => console.log('Cancel Pressed'), style: 'cancel',
     },
     {
-      text: 'OK', onPress: this.setUserReport.bind(this),
+      text: 'OK', onPress: this.setNewFriend.bind(this),
     },
   ],
   );
+
+  //  AlertIOS.prompt(
+  // 'Rapportera otrygg händelse',
+  // 'Vad har hänt?',
+  // [
+  //   {
+  //     text: 'Cancel',
+  //     onPress: () => console.log('Cancel Pressed'),
+  //     style: 'cancel',
+  //   },
+  //   {
+  //     text: 'OK', onPress: this.setUserReport.bind(this),
+  //   },
+  // ],
+  // );
+ }
+ setNewFriend(sendToFriend){
+   console.log("new friend", sendToFriend)
+   console.log("username", this.state.username)
+   this.setState({
+     sendToFriend: sendToFriend
+   })
+   fetch('https://pvt.dsv.su.se/Group08/friendRequest', {
+  method: 'POST',
+  headers: {
+    //'Accept' : "application/json",
+    'Accept': 'text/plain',
+    'Content-Type': "application/json"},
+    // 'Accept': 'text/plain',
+    // 'Content-Type': 'text/plain'},
+  body: JSON.stringify({
+    "username_sender": this.state.username,
+    "username_receiver": this.state.sendToFriend
+
+  })
+}).
+  then((response) => {
+    console.log(response)
+    if(response.ok === false){
+      console.log("no go")
+    }else{
+      'Vänförfrågan skickad',
+      [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ],
+      { cancelable: false }
+    }
+    //console.log('Done', response);
+  });
  }
 
  searchPlace(text, field){
