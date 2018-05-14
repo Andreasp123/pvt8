@@ -69,9 +69,6 @@ export default class Profile extends React.Component {
       console.log(this.state.userReport)
     }
 
-//Hjälpmetod till addFriend
-//måste calla databasen
-
   //lägga till en vän
   addFriend(){
     AlertIOS.prompt(

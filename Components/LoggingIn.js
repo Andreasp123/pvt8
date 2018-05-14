@@ -64,6 +64,7 @@ export default class LoggingIn extends React.Component {
 
           if(response.ok){
             response.json().then(json =>{
+              console.log("json body", json)
               if(json.Login === true){
                 //console.log("det funkar")
                 this.navigate({

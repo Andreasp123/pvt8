@@ -49,6 +49,7 @@ export default class Main extends Component {
 
 		this.state = {
       username : this.props.navigation.state.params.username,
+      shareGPS: this.props.navigation.state.params.shareGPS,
 
       friendToMeet: [
         {
@@ -122,6 +123,7 @@ export default class Main extends Component {
 
   //Ny, Hampus
   checkFriendRequests(){
+    console.log("i checkfriend")
     fetch('https://pvt.dsv.su.se/Group08/getFriendRequests', {
    method: 'POST',
    headers: {
@@ -130,19 +132,25 @@ export default class Main extends Component {
      // 'Accept': 'text/plain',
      // 'Content-Type': 'text/plain'},
    body: JSON.stringify({
-     "username": this.state.username,
+     "username": "user1",
    })
  }).
  then((response) => {
+   console.log(response)
    if(response.ok){
      response.json().then(json =>{
+       console.log("json", json)
+       console.log(json[0].username)
+
        this.setState({
          friendRequests : json,
-         friendsName: json.username
+         friendsName: json[0].username
        })
+       console.log("friendsname", this.state.friendsName)
 
-       if(friendRequests !== undefined){
-         acceptFriendRequest(friendsName)
+       if(this.state.friendsName !== undefined){
+         console.log("kom hit")
+         this.acceptFriendRequest(this.state.friendsName)
        }
      })
 
@@ -152,19 +160,19 @@ export default class Main extends Component {
 }
 //Hjälpmetod till checkFriendRequests
 acceptFriendRequest(friendsName){
-    Alert.alert(
-      friendsName + ' vill lägga till dig som vän',
-      [
-        {text: 'Avböj', onPress: () => console.log('Cancel Pressed'), style: 'cancel',
-      },
-      {text: 'Acceptera', onPress: () => this.confirmFriendRequest.bind(this), style: 'acceptera'},
+  Alert.alert(`${friendsName} vill lägga till dig som vän`, undefined, [
+  {
+    text: 'Avböj',
+    onPress: () => console.log('Cancel Pressed'),
+    style: 'cancel',
+  },
+  { text: 'Acceptera', onPress: () => this.confirmFriendRequest(this) },
+]);
 
-    ],
-      { cancelable: false }
-    )
   }
   //hjälpmetod till acceptFriendRequest
 confirmFriendRequest(){
+  console.log("i confirm")
   fetch('https://pvt.dsv.su.se/Group08/confirmFriendRequest', {
   method: 'POST',
   headers: {
@@ -175,8 +183,8 @@ confirmFriendRequest(){
    // 'Content-Type': 'text/plain'},
   body: JSON.stringify({
 
-    "username_sender": this.state.username,
-    "username_receiver": this.state.friendsName
+    "username_sender": this.state.friendsName,
+    "username_receiver": 'user1'
   })
   }).
   then((response) => {
@@ -239,9 +247,22 @@ confirmFriendRequest(){
      });
   }
 
+//ny metod
+  shareMyLocation(){
+    if(shareGPS !== undefined){
+      //send my coordinates to database
+    }
+  }
+
+  friendShareLocation(){
+
+  }
+
   componentDidMount() {
     this.aTestData()
     this.fetchPanicLocations()
+    this.checkFriendRequests()
+
     Animated.timing(this.state.animatedTop, {
     toValue: 200, // position where you want the component to end up
     duration: 400 // time the animation will take to complete, in ms
@@ -552,16 +573,6 @@ setUserReport(report){
 
       />
 
-
-         //   <MapView.Marker
-         //   key={panic.id}
-         //   coordinate={{
-         //   latitude: panic.lat,
-         //   longitude: panic.lng,
-         //
-         // }}
-         //image={warning}
-         // />
       ));
     // }
 
@@ -589,20 +600,7 @@ setUserReport(report){
     // ));
 
 
-    // let destination = this.state.destinationLocation.map(destination => (
-    //   <MapViewDirections
-    //   key={destination.lat}
-    //     origin={this.state.origin[0]}
-    //     //origin={this.state.origin}
-    //     destination={this.state.destinationLocation}
-    //     apikey={GOOGLE_MAPS_APIKEY}
-    //     strokeWidth={3}
-    //     strokeColor="hotpink"
-    //     onReady={this.onReady}
-    //     onError={this.onError}
-    //   />
-    //
-    // ));
+
 
     //DEN FUNGERANDE
     // för att slippa error
