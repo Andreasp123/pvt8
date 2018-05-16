@@ -29,12 +29,39 @@ export default class Profile extends React.Component {
     }
   }
 
+  setShareLocation(){
+    fetch('https://pvt.dsv.su.se/Group08/setShareLocationFriends', {
+   method: 'POST',
+   headers: {
+     'Accept': 'application/json',
+     'Content-Type': "application/json"},
+   body: JSON.stringify({
+
+      "username":  this.state.username,
+      "setShareLocation": this.state.shareGPS
+
+   })
+ }).
+   then((response) => {
+     console.log(this.state.shareGPS)
+
+     if(response.ok){
+       response.json().then(json =>{
+       })
+     }
+
+   });
+  }
+
   onClickShareLocation(){
     if(this.state.shareLocation === 'Dela min plats'){
       this.setState({
         shareLocation : 'Sluta dela plats',
         shareGPS: true
       })
+      this.setShareLocation()
+
+
     } else {
       this.setState({
         shareLocation: 'Dela min plats',

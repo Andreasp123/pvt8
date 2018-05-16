@@ -72,7 +72,9 @@ export default class Main extends Component {
       latitude: 59.326822,
       longitude: 18.071540,
 
-
+      friendsCoordinatesNotAccepted: [],
+      friendsCoordinatesAccepted: [],
+      friendsCoordinates: [],
 
       dataSource:[],
 
@@ -225,11 +227,7 @@ confirmFriendRequest(){
      });
   }
 
-
-
-
   fetchPanicLocations(){
-
     return fetch('https://pvt.dsv.su.se/Group08/getPanicLocations')
      .then((response) => response.json())
      .then((responseJson) => {
@@ -249,16 +247,118 @@ confirmFriendRequest(){
      });
   }
 
-//ny metod
+//dela min och hämta användares coordinater nedan
   shareMyLocation(){
-    if(shareGPS !== undefined){
-      //send my coordinates to database
+    if(this.state.shareGPS){
+      fetch('https://pvt.dsv.su.se/Group08/setUserLocation', {
+     method: 'POST',
+     headers: {
+        'Accept': 'application/json',
+       'Content-Type': "application/json"},
+     body: JSON.stringify({
+
+        "username":  this.state.username,
+        "latitude": this.state.latitude,
+        "longitude": this.state.longitude,
+     })
+   }).
+     then((response) => {
+
+       if(response.ok){
+       }
+     });
     }
   }
 
-  friendShareLocation(){
+  fetchFriendShareLocation(){
+    fetch('https://pvt.dsv.su.se/Group08/getFriendsLocation', {
+   method: 'POST',
+   headers: {
+      'Accept': 'application/json',
+     'Content-Type': "application/json"},
+   body: JSON.stringify({
+      "username":  this.state.username,
+   })
+ }).
+ then((response) => {
+   if(response.ok){
+     response.json().then(json =>{
+       if(json.username !== undefined){
+            let friend = responseJson.map(friend => (
+              <MapView.Marker
+              key={friend.lat}
+              coordinate={{
+              latitude: friend.lat,
+              longitude: friend.lng,
+            }}
+              title={friend.username}
+              description={'Här är jag'}
+              pinColor={'green'}
+                />
+            ));
+            this.setState({
+              friendsCoordinates: friend,
+            })
+       }
+     })
+   }
 
-  }
+ });
+}
+ // then((response) => {
+ //   if(response.ok){
+ //     response.json().then(json =>{
+ //       if(json.username !== undefined){
+ //         let friend = responseJson.map(friend => (
+ //              <MapView.Marker
+ //              key={friend.lat}
+ //              coordinate={{
+ //              latitude: friend.lat,
+ //              longitude: friend.lng,
+ //            }}
+ //            title={friend.username}
+ //            description={'Här är jag'}
+ //            pinColor={'green'}
+ //            />
+ //         ));
+ //       }}
+ //     }}
+
+     // let friend = responseJson.map(friend => (
+     //      <MapView.Marker
+     //      key={friend.lat}
+     //      coordinate={{
+     //      latitude: friend.lat,
+     //      longitude: friend.lng,
+     //    }}
+     //    title={friend.username}
+     //    description={'Här är jag'}
+     //    pinColor={'green'}
+     //    />
+     // ));
+
+     //     this.setState({
+     //       friendsCoordinates: friend,
+     //     });
+     //   })
+     //   .catch((error) =>{
+     //     console.error(error);
+     //   });
+     // }
+
+  // friendShareLocation(){
+  //   acceptFriendRequest(friendsName){
+  //     Alert.alert(`${friendsName} dela sin plats med dig`, undefined, [
+  //     {
+  //       text: 'Avböj',
+  //       onPress: () => console.log('Cancel Pressed'),
+  //       style: 'cancel',
+  //     },
+  //     { text: 'Acceptera', onPress: () => this.confirmFriendRequest(this) },
+  //   ]);
+  //
+  //     }
+  // }
 
   componentDidMount() {
     this.aTestData()
@@ -418,8 +518,6 @@ confirmFriendRequest(){
       this.setState({
         insecureLocationsData: insecureMarkers,
       })
-      console.log("insecurelotations", this.state.insecureLocationsData)
-
     }
     //console.log('Done', response);
   );
@@ -626,6 +724,8 @@ setUserReport(report){
 	render() {
     //this.getInsecureLocation()
     this.fetchPanicLocations()
+    this.shareMyLocation()
+    this.fetchFriendShareLocation()
 
     //console.log(this.state.adamData)
 
@@ -806,6 +906,7 @@ setUserReport(report){
 
         {this.state.adamData}
         {this.state.dataSource}
+        {this.state.friendsCoordinates}
 
         {panicMarker}
 
