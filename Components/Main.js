@@ -73,12 +73,12 @@ export default class Main extends Component {
       longitude: 18.071540,
 
 
-      originLatitude: 59.326822,
-      origionLongitude: 18.071540,
+
       dataSource:[],
 
       adamData:[],
       markTest:[],
+      insecureLocationsData:[],
       testValue: 'hejsan',
       panicData:[],
       animatedTop: new Animated.Value(0),
@@ -121,7 +121,7 @@ export default class Main extends Component {
     alert("detta funkar också")
   }
 
-  //Ny, Hampus
+  //Ny
   checkFriendRequests(){
     console.log("i checkfriend")
     fetch('https://pvt.dsv.su.se/Group08/getFriendRequests', {
@@ -139,14 +139,13 @@ export default class Main extends Component {
    console.log(response)
    if(response.ok){
      response.json().then(json =>{
-       console.log("json", json)
-       console.log(json[0].username)
 
-       this.setState({
-         friendRequests : json,
-         friendsName: json[0].username
-       })
-       console.log("friendsname", this.state.friendsName)
+       if(json[0] !== undefined){
+         this.setState({
+           friendRequests : json,
+           friendsName: json[0].username
+         })
+       }
 
        if(this.state.friendsName !== undefined){
          console.log("kom hit")
@@ -226,6 +225,9 @@ confirmFriendRequest(){
      });
   }
 
+
+
+
   fetchPanicLocations(){
 
     return fetch('https://pvt.dsv.su.se/Group08/getPanicLocations')
@@ -262,6 +264,7 @@ confirmFriendRequest(){
     this.aTestData()
     this.fetchPanicLocations()
     this.checkFriendRequests()
+    this.getInsecureLocation()
 
     Animated.timing(this.state.animatedTop, {
     toValue: 200, // position where you want the component to end up
@@ -287,8 +290,7 @@ confirmFriendRequest(){
                longitude: position.coords.longitude,
              },
            ],
-           originLatitude: position.coords.latitude,
-           originLongitude: position.coords.longitude,
+
            error: null,
          });
 
@@ -362,11 +364,7 @@ confirmFriendRequest(){
       .catch((error) =>{
         console.error(error);
       });
-
-
       //adam
-
-
 
       // testar ta bort denna
       // let destination = this.state.coordinates.map(destination => (
@@ -384,11 +382,48 @@ confirmFriendRequest(){
       //
       // ));
 
-
-
-
-
  }
+ getInsecureLocation(){
+   console.log("i insecure")
+   fetch('https://pvt.dsv.su.se/Group08/getInsecureLocations', {
+  method: 'POST',
+  headers: {
+    'Accept' : "application/json",
+    //'Accept': 'text/plain',
+    'Content-Type': "application/json"},
+    // 'Accept': 'text/plain',
+    // 'Content-Type': 'text/plain'},
+ }).
+  then((response) => response.json())
+    .then((responseJson) => {
+      console.log(responseJson)
+      this.setState({
+        insecureData: responseJson
+      })
+      console.log("i insecure", responseJson)
+      let insecureMarkers = responseJson.map(markers => (
+           <MapView.Marker
+           key={markers.key}
+           coordinate={{
+           latitude: markers.lat,
+           longitude: markers.lng,
+         }}
+         title={'Otrygg händelse'}
+         description={markers.val}
+
+
+         />
+
+      ));
+      this.setState({
+        insecureLocationsData: insecureMarkers,
+      })
+      console.log("insecurelotations", this.state.insecureLocationsData)
+
+    }
+    //console.log('Done', response);
+  );
+  }
 
  handleClickFavourite = () => {
    this.navigate({
@@ -426,18 +461,26 @@ setUserReport(report){
 //denna koden är endast tillagd på profile för att det var den enda knappen som fetchPanicLocations
 //ska bytas ut, koden finns i profile
  handleClickProfile = () => {
-   AlertIOS.prompt(
-  'Lägg till vän',
-  'Användarnamn:',
-  [{
-      text: 'Avbryt',
-      onPress: () => console.log('Cancel Pressed'), style: 'cancel',
-    },
-    {
-      text: 'OK', onPress: this.setNewFriend.bind(this),
-    },
-  ],
-  );
+   this.navigate({
+   routeName: 'profile',
+   key: 'profile',
+   params: {
+      username: this.state.username
+   }
+});
+
+  //  AlertIOS.prompt(
+  // 'Lägg till vän',
+  // 'Användarnamn:',
+  // [{
+  //     text: 'Avbryt',
+  //     onPress: () => console.log('Cancel Pressed'), style: 'cancel',
+  //   },
+  //   {
+  //     text: 'OK', onPress: this.setNewFriend.bind(this),
+  //   },
+  // ],
+  // );
 
   //  AlertIOS.prompt(
   // 'Rapportera otrygg händelse',
@@ -581,6 +624,7 @@ setUserReport(report){
 
 
 	render() {
+    //this.getInsecureLocation()
     this.fetchPanicLocations()
 
     //console.log(this.state.adamData)
@@ -613,7 +657,7 @@ setUserReport(report){
         longitude: panic.lng,
 
       }}
-      radius={8}
+      radius={3}
       strokeWidth = { 1 }
       strokeColor = { 'red' }
       fillColor = { 'red' }
@@ -622,10 +666,23 @@ setUserReport(report){
 
       ));
     // }
-
-
-
-
+    // let insecureMarkers = this.state.insecureData.map(markers => (
+    //      <MapView.Marker
+    //      key={markers.key}
+    //      coordinate={{
+    //      latitude: markers.lat,
+    //      longitude: markers.lng,
+    //
+    //
+    //
+    //    }}
+    //    title={'Otrygg händelse'}
+    //    description={markers.val}
+    //
+    //
+    //    />
+    //
+    // ));
 
     // let markers = data.map(lamps => (
     //      <MapView.Marker
@@ -751,6 +808,8 @@ setUserReport(report){
         {this.state.dataSource}
 
         {panicMarker}
+
+        {this.state.insecureLocationsData}
 
 
 

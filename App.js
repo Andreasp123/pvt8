@@ -8,6 +8,8 @@ import LoggingIn from './Components/LoggingIn';
 import favPlaces from './Components/FavPlaces';
 import Register from './Components/Register';
 import Profile from './Components/Profile';
+import facebookLogin from './Components/facebookLogin';
+import GoogleLogin from './Components/GoogleLogin';
 //import FavouritePlaces from './Components/FavouritePlaces';
 //import testMain from './Components/testMain';
 //import testnavigation from './Components/testnavigation';
@@ -23,13 +25,19 @@ const mainOptions = createSwitchNavigator({
   favouritePlaces : FavouritePlaces,
   register : Register,
   loggingIn : LoggingIn,
+  facebook : facebookLogin,
+  google : GoogleLogin,
+  profile : Profile
   //testmain : testMain,
 
 
 })
 const introStack = createStackNavigator({
   loggingIn : LoggingIn,
-  register : Register
+  register : Register,
+  facebook : facebookLogin,
+  google : GoogleLogin,
+  profile : Profile
 })
 
 const SwNavigator = createSwitchNavigator({
@@ -39,7 +47,10 @@ const SwNavigator = createSwitchNavigator({
   //testmain : testMain,
   favPlaces : favPlaces,
   favouritePlaces : FavouritePlaces,
-  register : Register
+  register : Register,
+  facebook : facebookLogin,
+  google : GoogleLogin,
+  profile : Profile
 
 })
 export default class App extends React.Component {

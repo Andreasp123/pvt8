@@ -22,6 +22,8 @@ export default class Profile extends React.Component {
       shareLocation : 'Dela min plats',
       userReport: '',
       newFriend: '',
+      latitude: '',
+      longitude: '',
 
     }
   }
@@ -40,6 +42,39 @@ export default class Profile extends React.Component {
     }
   }
 
+  componentDidMount(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => this.setState({ error: error.message }),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+    );
+  }
+
+
+//denna skall flyttas till mainOptions
+getInsecureLocation(){
+  console.log("i insecure")
+  fetch('https://pvt.dsv.su.se/Group08/getInsecureLocations', {
+ method: 'POST',
+ headers: {
+   'Accept' : "application/json",
+   //'Accept': 'text/plain',
+   'Content-Type': "application/json"},
+   // 'Accept': 'text/plain',
+   // 'Content-Type': 'text/plain'},
+}).
+ then((response) => response.json())
+   .then((responseJson) => {
+     console.log(responseJson)
+   }
+   //console.log('Done', response);
+   )
+ };
 
 
 //användarrapport, otrygg händelse
@@ -63,10 +98,36 @@ export default class Profile extends React.Component {
   //hjälpmetod till reportEvent för att kunna hämta ut värdet användaren skriver in
   //glöm inte att skicka iväg till databasen när endpointen är uppe
     setUserReport(report){
+      console.log("här?")
       this.setState({
         userReport: report
       })
-      console.log(this.state.userReport)
+      fetch('https://pvt.dsv.su.se/Group08/addInsecureLocation', {
+     method: 'POST',
+     headers: {
+        'Accept': 'application/json',
+       'Content-Type': "application/json"},
+     body: JSON.stringify({
+
+        "username": this.state.username,
+        "latitude": this.state.latitude,
+        "longitude": this.state.longitude,
+        "userReport": this.state.userReport,
+     })
+   }).
+     then((response) => {
+       console.log(response)
+
+       if(response.ok){
+         response.json().then(json =>{
+
+         })
+
+       }
+
+       //console.log('Done', response);
+
+     });
     }
 
   //lägga till en vän
@@ -85,24 +146,28 @@ export default class Profile extends React.Component {
    );
   }
   //hjälpmetod till addfriend
-  setNewFriend(newFriend){
+  setNewFriend(sendToFriend){
+    console.log("new friend", sendToFriend)
+    console.log("username", this.state.username)
     this.setState({
-      newFriend: newFriend
+      sendToFriend: sendToFriend
     })
     fetch('https://pvt.dsv.su.se/Group08/friendRequest', {
    method: 'POST',
    headers: {
-     'Accept' : "application/json",
+     //'Accept' : "application/json",
+     'Accept': 'text/plain',
      'Content-Type': "application/json"},
      // 'Accept': 'text/plain',
      // 'Content-Type': 'text/plain'},
    body: JSON.stringify({
      "username_sender": this.state.username,
-     "username_receiver": this.state.newFriend
+     "username_receiver": this.state.sendToFriend
 
    })
  }).
    then((response) => {
+     console.log(response)
      if(response.ok === false){
        console.log("no go")
      }else{
@@ -129,9 +194,16 @@ export default class Profile extends React.Component {
 
 
   render() {
+    this.getInsecureLocation()
 
     return (
     <View style ={styles.container}>
+    <Button style ={styles.reportEvent}
+    Button onPress={() => {
+      this.reportEvent();
+    }}
+    title="Rapportera händelse"
+    />
 
 
 
@@ -146,4 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
   },
+  reportEvent:{
+    top: 35,
+  }
 });

@@ -61,6 +61,7 @@ export default class LoggingIn extends React.Component {
         })
       }).
         then((response) => {
+          console.log(response)
 
           if(response.ok){
             response.json().then(json =>{
@@ -100,6 +101,24 @@ export default class LoggingIn extends React.Component {
      }
 
    }
+
+   signInWithFacebook(){
+     this.navigate({
+     routeName: 'facebook',
+     key: 'facebook',
+     params: {
+     }
+   });
+ }
+
+ signInWithGoogle(){
+   this.navigate({
+   routeName: 'google',
+   key: 'google',
+   params: {
+   }
+ });
+}
 
   register(){
     this.props.navigation.navigate("register")
@@ -188,6 +207,21 @@ export default class LoggingIn extends React.Component {
       }}
       title="Sign in"
       />
+
+      <Button
+      Button onPress={() => {
+        this.signInWithFacebook();
+      }}
+      title="Sign in with facebook"
+      />
+
+      <Button
+      Button onPress={() => {
+        this.signInWithGoogle();
+      }}
+      title="Sign in with Google"
+      />
+
       </View>
 
 
