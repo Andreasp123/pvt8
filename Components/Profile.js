@@ -25,6 +25,7 @@ export default class Profile extends React.Component {
       latitude: '',
       longitude: '',
 
+
     }
   }
 
@@ -109,10 +110,11 @@ getInsecureLocation(){
        'Content-Type': "application/json"},
      body: JSON.stringify({
 
-        "username": this.state.username,
+        "username":  "usermedemail",
+        "locationname": this.state.userReport,
         "latitude": this.state.latitude,
         "longitude": this.state.longitude,
-        "userReport": this.state.userReport,
+
      })
    }).
      then((response) => {
@@ -182,12 +184,16 @@ getInsecureLocation(){
   }
 
   exitProfileBtn(){
+    console.log("testlat", this.state.testLat, this.state.testLong)
     this.navigate({
     routeName: 'main',
     key: 'main',
     params: {
        username: this.state.username,
        shareGPS: this.state.shareGPS,
+       //dessa under ska byta namn sen men måste bytas i alla klasser då så får heta så test tills vidare
+       testLat: this.state.latitude,
+       testLong: this.state.longitude,
     }
   });
   }
@@ -205,6 +211,20 @@ getInsecureLocation(){
     title="Rapportera händelse"
     />
 
+    <Button style ={styles.shareBtn}
+    Button onPress={() => {
+      this.onClickShareLocation();
+    }}
+    title={this.state.shareLocation}
+    />
+
+    <Button style ={styles.exitBtn}
+    Button onPress={() => {
+      this.exitProfileBtn();
+    }}
+    title="Exit"
+    />
+
 
 
 
@@ -220,5 +240,11 @@ const styles = StyleSheet.create({
   },
   reportEvent:{
     top: 35,
+  },
+  shareBtn:{
+    top: 75,
+  },
+  exitBtn:{
+    top: 115
   }
 });

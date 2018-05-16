@@ -400,16 +400,16 @@ confirmFriendRequest(){
       this.setState({
         insecureData: responseJson
       })
-      console.log("i insecure", responseJson)
       let insecureMarkers = responseJson.map(markers => (
            <MapView.Marker
-           key={markers.key}
+           key={markers.lat}
            coordinate={{
            latitude: markers.lat,
            longitude: markers.lng,
          }}
-         title={'Otrygg händelse'}
+         title={'Otrygg händelse' + markers.key}
          description={markers.val}
+         pinColor={'purple'}
 
 
          />
