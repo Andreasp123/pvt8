@@ -237,6 +237,13 @@ getInsecureLocation(){
     title="Rapportera händelse"
     />
 
+    <Button style ={styles.addFriendBtn}
+    Button onPress={() => {
+      this.addFriend();
+    }}
+    title="Rapportera händelse"
+    />
+
     <Button style ={styles.shareBtn}
     Button onPress={() => {
       this.onClickShareLocation();
@@ -272,5 +279,8 @@ const styles = StyleSheet.create({
   },
   exitBtn:{
     top: 115
+  },
+  FriendBtn:{
+    top: 155
   }
 });
