@@ -44,12 +44,10 @@ export default class Profile extends React.Component {
  }).
    then((response) => {
      console.log(this.state.shareGPS)
-
      if(response.ok){
        response.json().then(json =>{
        })
      }
-
    });
   }
 
@@ -67,6 +65,7 @@ export default class Profile extends React.Component {
         shareLocation: 'Dela min plats',
         shareGPS: false
       })
+      this.setShareLocation()
     }
   }
 

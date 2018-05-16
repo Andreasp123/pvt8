@@ -250,6 +250,7 @@ confirmFriendRequest(){
 //dela min och hämta användares coordinater nedan
   shareMyLocation(){
     if(this.state.shareGPS){
+
       fetch('https://pvt.dsv.su.se/Group08/setUserLocation', {
      method: 'POST',
      headers: {
@@ -263,7 +264,6 @@ confirmFriendRequest(){
      })
    }).
      then((response) => {
-
        if(response.ok){
        }
      });
