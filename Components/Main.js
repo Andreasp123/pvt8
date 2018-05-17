@@ -249,7 +249,9 @@ confirmFriendRequest(){
   }
 
 //dela min och hämta användares coordinater nedan
-  shareMyLocation(){
+shareMyLocation(){
+    //console.log("sharegps i main", this.state.shareGPS)
+
     if(this.state.shareGPS){
 
       fetch('https://pvt.dsv.su.se/Group08/setUserLocation', {
@@ -272,7 +274,8 @@ confirmFriendRequest(){
   }
 
   fetchFriendShareLocation(){
-    fetch('https://pvt.dsv.su.se/Group08/getFriendsLocation', {
+
+    fetch('https://pvt.dsv.su.se/Group08/getFriendLocations', {
    method: 'POST',
    headers: {
       'Accept': 'application/json',
@@ -284,8 +287,9 @@ confirmFriendRequest(){
  then((response) => {
    if(response.ok){
      response.json().then(json =>{
-       if(json.username !== undefined){
-            let friend = responseJson.map(friend => (
+       if(json[0].username !== undefined){
+
+            let friend = json.map(friend => (
               <MapView.Marker
               key={friend.lat}
               coordinate={{
@@ -297,6 +301,7 @@ confirmFriendRequest(){
               pinColor={'green'}
                 />
             ));
+            //console.log("friend", friend)
             this.setState({
               friendsCoordinates: friend,
             })
@@ -306,24 +311,7 @@ confirmFriendRequest(){
 
  });
 }
- // then((response) => {
- //   if(response.ok){
- //     response.json().then(json =>{
- //       if(json.username !== undefined){
- //         let friend = responseJson.map(friend => (
- //              <MapView.Marker
- //              key={friend.lat}
- //              coordinate={{
- //              latitude: friend.lat,
- //              longitude: friend.lng,
- //            }}
- //            title={friend.username}
- //            description={'Här är jag'}
- //            pinColor={'green'}
- //            />
- //         ));
- //       }}
- //     }}
+
 
      // let friend = responseJson.map(friend => (
      //      <MapView.Marker
@@ -729,6 +717,7 @@ handleClickMenu = () => {
 
 
 	render() {
+    //console.log(this.state.friendsCoordinates)
     //this.getInsecureLocation()
     this.fetchPanicLocations()
     this.shareMyLocation()
@@ -847,7 +836,7 @@ handleClickMenu = () => {
 
         //Grafiska element
 		return (
-      
+
       <View style= {styles.container}>
         {/* Sätter vit färg på ikonerna i statusbaren */}
         <StatusBar barStyle="light-content"/>
@@ -857,8 +846,8 @@ handleClickMenu = () => {
           provider = { MapView.PROVIDER_GOOGLE }
           customMapStyle = { generatedMapStyle }
           initialRegion={{
-            latitude: 59.406539,
-            longitude: 17.945055,
+            latitude:this.state.testLat,
+            longitude:this.state.testLong,
             //latitude:this.state.testLat,
             //longitude:this.state.testLong,
             // latitude:this.state.latitude,
@@ -869,9 +858,9 @@ handleClickMenu = () => {
           ref={c => this.mapView = c}
           onPress={this.onMapPress}
           loadingEnabled={true}>
+
           
-          {/* destination gör att jag inte ser kista som position som jag hårdkodat ovan i lat och long */}
-          {/*destination*/}
+          {destination}
           {this.state.adamData}
           {this.state.dataSource}
           {this.state.friendsCoordinates}
