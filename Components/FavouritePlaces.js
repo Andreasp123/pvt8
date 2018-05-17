@@ -5,8 +5,12 @@ import {
     StyleSheet,
     TextInput,
     ScrollView,
-    TouchableOpacity
+    TouchableOpacity,
+    Button,
 } from 'react-native';
+import {
+  StackNavigator,
+} from 'react-navigation';
 import data from './data'
 import testdata from './testdata'
 import Place from './Place';
@@ -104,6 +108,8 @@ let places = this.state.placeArray.map((val, key)=>{
                findPlace={()=>this.findPlace(val)}
             />
 });
+
+const {navigate} = this.props.navigation;
 // let places = this.state.placeArray.map((val, key)=>{
 //     return <Place key={key} keyval={key} val={val}
 //             onPress={() => {
@@ -148,6 +154,16 @@ let places = this.state.placeArray.map((val, key)=>{
 
                 </View>
 
+                <View>
+        <Text>Gå tillbaka</Text>
+          <Button style ={styles.exitBtn}
+       Button onPress={() => {
+         this.exitProfileBtn();
+       }}
+       title="Exit"
+       />
+      </View>
+
              </View>
         );
     }
@@ -168,6 +184,16 @@ let places = this.state.placeArray.map((val, key)=>{
         this.state.placeArray.splice(key, 1);
         this.setState({placeArray: this.state.placeArray});
     }
+
+  exitProfileBtn(){
+   this.navigate({
+   routeName: 'main',
+   key: 'main',
+   params: {
+      username: this.state.username,
+   }
+ });
+ }
 
     findPlace(val){
       console.log("print val", val.place)
