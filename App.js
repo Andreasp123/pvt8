@@ -8,6 +8,7 @@ import LoggingIn from './Components/LoggingIn';
 import favPlaces from './Components/FavPlaces';
 import Register from './Components/Register';
 import Profile from './Components/Profile';
+import Menu from './Components/Screens/Menu';
 import facebookLogin from './Components/facebookLogin';
 import GoogleLogin from './Components/GoogleLogin';
 //import FavouritePlaces from './Components/FavouritePlaces';
@@ -27,7 +28,8 @@ const mainOptions = createSwitchNavigator({
   loggingIn : LoggingIn,
   facebook : facebookLogin,
   google : GoogleLogin,
-  profile : Profile
+  profile : Profile,
+  menu : Menu
   //testmain : testMain,
 
 
@@ -50,7 +52,8 @@ const SwNavigator = createSwitchNavigator({
   register : Register,
   facebook : facebookLogin,
   google : GoogleLogin,
-  profile : Profile
+  profile : Profile,
+  menu : Menu
 
 })
 export default class App extends React.Component {
