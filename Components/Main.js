@@ -61,6 +61,7 @@ export default class Main extends Component {
 
       fetchedLamps: false,
       fetchWorkingLamps: false,
+      fetchInsecureLocations: false,
 
       testLat:this.props.navigation.state.params.testLat,
       testLong:this.props.navigation.state.params.testLong,
@@ -497,43 +498,48 @@ shareMyLocation(){
 
  }
  getInsecureLocation(){
-   console.log("i insecure")
-   fetch('https://pvt.dsv.su.se/Group08/getInsecureLocations', {
-  method: 'POST',
-  headers: {
-    'Accept' : "application/json",
-    //'Accept': 'text/plain',
-    'Content-Type': "application/json"},
-    // 'Accept': 'text/plain',
-    // 'Content-Type': 'text/plain'},
- }).
-  then((response) => response.json())
-    .then((responseJson) => {
-      console.log(responseJson)
-      this.setState({
-        insecureData: responseJson
-      })
-      let insecureMarkers = responseJson.map(markers => (
-           <MapView.Marker
-           key={markers.lat}
-           coordinate={{
-           latitude: markers.lat,
-           longitude: markers.lng,
-         }}
-         title={'Otrygg händelse' + markers.key}
-         description={markers.val}
-         pinColor={'purple'}
+   if(!this.state.fetchInsecureLocations){
+     fetch('https://pvt.dsv.su.se/Group08/getInsecureLocations', {
+    method: 'POST',
+    headers: {
+      'Accept' : "application/json",
+      //'Accept': 'text/plain',
+      'Content-Type': "application/json"},
+      // 'Accept': 'text/plain',
+      // 'Content-Type': 'text/plain'},
+   }).
+    then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson)
+        this.setState({
+          insecureData: responseJson
+        })
+        let insecureMarkers = responseJson.map(markers => (
+             <MapView.Marker
+             key={markers.lat}
+             coordinate={{
+             latitude: markers.lat,
+             longitude: markers.lng,
+           }}
+           title={'Otrygg händelse' + markers.key}
+           description={markers.val}
+           pinColor={'purple'}
 
 
-         />
+           />
 
-      ));
-      this.setState({
-        insecureLocationsData: insecureMarkers,
-      })
-    }
-    //console.log('Done', response);
-  );
+        ));
+        this.setState({
+          insecureLocationsData: insecureMarkers,
+        })
+      }
+      //console.log('Done', response);
+    );
+   }
+   this.setState({
+     fetchInsecureLocations: true
+   })
+
   }
 
  handleClickFavourite = () => {
