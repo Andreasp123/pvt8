@@ -285,7 +285,7 @@ shareMyLocation(){
    })
  }).
  then((response) => {
-   if(response.ok){
+if(response.ok){
      response.json().then(json =>{
        if(json[0].username !== undefined){
 
@@ -350,10 +350,14 @@ shareMyLocation(){
   // }
 
   componentDidMount() {
+    this.shareMyLocation()
+    this.fetchFriendShareLocation()
     this.aTestData()
     this.fetchPanicLocations()
     this.checkFriendRequests()
     this.getInsecureLocation()
+    this.fetchPanicLocations()
+    this.shareMyLocation()
 
     Animated.timing(this.state.animatedTop, {
     toValue: 200, // position where you want the component to end up
@@ -717,11 +721,7 @@ handleClickMenu = () => {
 
 
 	render() {
-    //console.log(this.state.friendsCoordinates)
-    //this.getInsecureLocation()
-    this.fetchPanicLocations()
-    this.shareMyLocation()
-    this.fetchFriendShareLocation()
+
 
     //console.log(this.state.adamData)
 
@@ -859,7 +859,6 @@ handleClickMenu = () => {
           onPress={this.onMapPress}
           loadingEnabled={true}>
 
-          
           {destination}
           {this.state.adamData}
           {this.state.dataSource}
