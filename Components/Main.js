@@ -59,6 +59,9 @@ export default class Main extends Component {
         }
       ],
 
+      fetchedLamps: false,
+      fetchWorkingLamps: false,
+
       testLat:this.props.navigation.state.params.testLat,
       testLong:this.props.navigation.state.params.testLong,
       testDestination : this.props.navigation.state.params.testDestination,
@@ -197,36 +200,41 @@ confirmFriendRequest(){
   });
 }
 
-  aTestData(){
-
-    return fetch('https://pvt.dsv.su.se/Group08/getRoute?name=Frutunnelbana')
-     .then((response) => response.json())
-     .then((responseJson) => {
-       this.setState({testData : responseJson})
-       let testAdam1 = responseJson.map(circle => (
-            <MapView.Circle
-            key={circle.id}
-            center={{
-            latitude: circle.lat,
-            longitude: circle.lng,
-          }}
-          radius={3}
-          strokeWidth = { 1 }
-          strokeColor = { '#1a66ff' }
-          fillColor = { '#1a66ff' }
-          animation = {Animated.bounce}
-          />
-
-
-       ));
-         this.setState({
-           adamData : testAdam1,
-         });
-     })
-     .catch((error) =>{
-       console.error(error);
-     });
+aTestData(){
+  if(!this.state.fetchWorkingLamps){
+    return fetch('https://pvt.dsv.su.se/Group08/getLamps?working=true')
+       .then((response) => response.json())
+       .then((responseJson) => {
+         this.setState({testData : responseJson})
+         let testAdam1 = responseJson.map(circle => (
+              <MapView.Circle
+              key={circle.id}
+              center={{
+              latitude: circle.lat,
+              longitude: circle.lng,
+            }}
+            radius={1}
+            strokeWidth = { 1 }
+            strokeColor = { 'yellow' }
+            fillColor = { '#1a66ff' }
+            animation = {Animated.bounce}
+            />
+          ));
+           this.setState({
+             adamData : testAdam1,
+           });
+       })
+       .catch((error) =>{
+         console.error(error);
+       });
   }
+  this.setState({
+    fetchWorkingLamps: true
+  })
+
+ //  https://pvt.dsv.su.se/Group08/getRoute?name=Frutunnelbana
+
+ }
 
   fetchPanicLocations(){
     return fetch('https://pvt.dsv.su.se/Group08/getPanicLocations')
@@ -249,7 +257,9 @@ confirmFriendRequest(){
   }
 
 //dela min och hämta användares coordinater nedan
-  shareMyLocation(){
+shareMyLocation(){
+    //console.log("sharegps i main", this.state.shareGPS)
+
     if(this.state.shareGPS){
 
       fetch('https://pvt.dsv.su.se/Group08/setUserLocation', {
@@ -272,7 +282,8 @@ confirmFriendRequest(){
   }
 
   fetchFriendShareLocation(){
-    fetch('https://pvt.dsv.su.se/Group08/getFriendsLocation', {
+
+    fetch('https://pvt.dsv.su.se/Group08/getFriendLocations', {
    method: 'POST',
    headers: {
       'Accept': 'application/json',
@@ -283,9 +294,11 @@ confirmFriendRequest(){
  }).
  then((response) => {
    if(response.ok){
+     console.log("i fetchfr", response)
      response.json().then(json =>{
-       if(json.username !== undefined){
-            let friend = responseJson.map(friend => (
+       if(json[0].username !== undefined){
+
+            let friend = json.map(friend => (
               <MapView.Marker
               key={friend.lat}
               coordinate={{
@@ -297,6 +310,7 @@ confirmFriendRequest(){
               pinColor={'green'}
                 />
             ));
+            //console.log("friend", friend)
             this.setState({
               friendsCoordinates: friend,
             })
@@ -306,24 +320,7 @@ confirmFriendRequest(){
 
  });
 }
- // then((response) => {
- //   if(response.ok){
- //     response.json().then(json =>{
- //       if(json.username !== undefined){
- //         let friend = responseJson.map(friend => (
- //              <MapView.Marker
- //              key={friend.lat}
- //              coordinate={{
- //              latitude: friend.lat,
- //              longitude: friend.lng,
- //            }}
- //            title={friend.username}
- //            description={'Här är jag'}
- //            pinColor={'green'}
- //            />
- //         ));
- //       }}
- //     }}
+
 
      // let friend = responseJson.map(friend => (
      //      <MapView.Marker
@@ -361,11 +358,52 @@ confirmFriendRequest(){
   //     }
   // }
 
+  fetchNotWorkingLamps(){
+    if(!this.state.fetchedLamps){
+      console.log("fetchar lampor")
+      return fetch('https://pvt.dsv.su.se/Group08/getLamps?working=false')
+       .then((response) => response.json())
+       .then((responseJson) => {
+         this.setState({data : responseJson})
+         let circles = responseJson.map(circle => (
+              <MapView.Circle
+              key={circle.name}
+              center={{
+              latitude: circle.lat,
+              longitude: circle.lng,
+            }}
+            radius={3}
+            strokeWidth = { 1 }
+            strokeColor = { '#1a66ff' }
+            fillColor = { '#1a66ff' }
+            animation = {Animated.bounce}
+            />
+
+
+         ));
+           this.setState({
+             dataSource : circles,
+           });
+       })
+       .catch((error) =>{
+         console.error(error);
+       });
+       this.setState({
+         fetchedLamps: true
+       })
+    }
+  }
+
   componentDidMount() {
+    this.shareMyLocation()
+    this.fetchFriendShareLocation()
     this.aTestData()
     this.fetchPanicLocations()
     this.checkFriendRequests()
     this.getInsecureLocation()
+    this.fetchPanicLocations()
+    this.shareMyLocation()
+    this.fetchNotWorkingLamps()
 
     Animated.timing(this.state.animatedTop, {
     toValue: 200, // position where you want the component to end up
@@ -438,33 +476,7 @@ confirmFriendRequest(){
        username : this.props.navigation.state.params.username,
      })
 
-     return fetch('https://pvt.dsv.su.se/Group08/getLamps?working=false')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({data : responseJson})
-        let circles = responseJson.map(circle => (
-             <MapView.Circle
-             key={circle.name}
-             center={{
-             latitude: circle.lat,
-             longitude: circle.lng,
-           }}
-           radius={3}
-           strokeWidth = { 1 }
-           strokeColor = { '#1a66ff' }
-           fillColor = { '#1a66ff' }
-           animation = {Animated.bounce}
-           />
 
-
-        ));
-          this.setState({
-            dataSource : circles,
-          });
-      })
-      .catch((error) =>{
-        console.error(error);
-      });
       //adam
 
       // testar ta bort denna
@@ -729,10 +741,10 @@ handleClickMenu = () => {
 
 
 	render() {
+    //console.log(this.state.friendsCoordinates)
     //this.getInsecureLocation()
-    this.fetchPanicLocations()
-    this.shareMyLocation()
-    this.fetchFriendShareLocation()
+
+
 
     //console.log(this.state.adamData)
 
@@ -859,6 +871,8 @@ handleClickMenu = () => {
           initialRegion={{
             latitude:this.state.testLat,
             longitude:this.state.testLong,
+            //latitude:this.state.testLat,
+            //longitude:this.state.testLong,
             // latitude:this.state.latitude,
             // longitude:this.state.longitude,
             latitudeDelta: 0.043,
@@ -868,7 +882,7 @@ handleClickMenu = () => {
           onPress={this.onMapPress}
           loadingEnabled={true}>
 
-          {/* destination gör att jag inte ser kista som position som jag hårdkodat ovan i lat och long */}
+
           {destination}
           {this.state.adamData}
           {this.state.dataSource}
