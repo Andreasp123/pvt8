@@ -1,6 +1,74 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+
+
+  bottomContainer:{
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    paddingLeft: 30,
+    paddingRight: 30
+  },
+  sosButton:{
+    height: 45,
+    width: 160,
+    backgroundColor: "#c72425",
+    alignItems: 'center',
+    justifyContent: "center"
+  },
+  sosText:{
+    color: "#FFFFFF",
+    fontSize: 20,
+  },
+
+  topContainer: {
+    position: "absolute",
+    top: 50,
+    width: "100%"
+  },
+  topButtonContainer:{
+    position: "absolute",
+    top: 0,
+    width: "100%"
+  },
+  profileButtonContainer:{
+    position: "absolute",
+    right: 20
+  },
+  favoriteButtonContainer:{
+    position: "absolute",
+    left: 20
+  },
+  searchContainer:{
+    position: 'absolute',
+    top: 50,
+    width: "100%",
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  searchBox:{
+    width: "90%",
+    height: 40,
+    backgroundColor: "#FFFFFF",
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingLeft: 15
+  },
+  deviderLine:{
+    borderWidth: 0.5,
+    borderColor:'#414141',
+    marginLeft:15,
+    height: "60%"
+  },
+  searchField:{
+    marginLeft: 15
+  },
+
+
+
   container: {
  flex: 1,
  flexDirection: 'column'
@@ -53,9 +121,9 @@ export default StyleSheet.create({
       width: 25,
       height: 15,
     },
-  map:{
-    height: 515,
-  },
+    map:{
+      height: "100%"
+    },
   bottom:{
    height: 75, backgroundColor: 'lightpink',
    alignItems:'center'

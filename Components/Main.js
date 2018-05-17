@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
   Alert, Platform, Communications, Linking, LoginButton, TouchableHighlight,ExpandableView,
-  Animation, Animated, AnimatedRegion, prompt, AlertIOS} from 'react-native';
+  Animation, Animated, AnimatedRegion, prompt, AlertIOS, StatusBar} from 'react-native';
+  import { FontAwesome } from '@expo/vector-icons';
 
 //import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
 import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-navigation';
@@ -556,6 +557,13 @@ setUserReport(report){
   console.log(this.state.userReport)
 }
 
+handleClickMenu = () => {
+   this.navigate({
+     routeName: 'menu',
+     key: 'menu'
+   })
+}
+
 //denna koden är endast tillagd på profile för att det var den enda knappen som fetchPanicLocations
 //ska bytas ut, koden finns i profile
  handleClickProfile = () => {
@@ -637,7 +645,6 @@ setUserReport(report){
    //console.log(this.state.searchField)
  }
 
-
  handleClick = () => {
    alert('Button clicked!');
  }
@@ -671,7 +678,7 @@ setUserReport(report){
   'Är du säker?',
   [
     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel', },
-    {text: 'OK', onPress: () => console.log('OK Pressed', ring: true)},
+    {text: 'OK', onPress: () => console.log('OK Pressed'), ring: true},
   ],
   { cancelable: false }
 )
@@ -838,6 +845,87 @@ setUserReport(report){
 
     ));
 
+        //Grafiska element
+		return (
+      
+      <View style= {styles.container}>
+        {/* Sätter vit färg på ikonerna i statusbaren */}
+        <StatusBar barStyle="light-content"/>
+
+        {/* Map view i helskärm */}
+        <MapView style={styles.map}
+          provider = { MapView.PROVIDER_GOOGLE }
+          customMapStyle = { generatedMapStyle }
+          initialRegion={{
+            latitude: 59.406539,
+            longitude: 17.945055,
+            //latitude:this.state.testLat,
+            //longitude:this.state.testLong,
+            // latitude:this.state.latitude,
+            // longitude:this.state.longitude,
+            latitudeDelta: 0.043,
+            longitudeDelta: 0.034}}
+
+          ref={c => this.mapView = c}
+          onPress={this.onMapPress}
+          loadingEnabled={true}>
+          
+          {/* destination gör att jag inte ser kista som position som jag hårdkodat ovan i lat och long */}
+          {/*destination*/}
+          {this.state.adamData}
+          {this.state.dataSource}
+          {this.state.friendsCoordinates}
+          {panicMarker}
+          {this.state.insecureLocationsData}
+
+        </MapView>
+
+        {/* Container för sök-ruta ovanför kartan */}
+        <View style={styles.topContainer}>
+          <View style={styles.topButtonContainer}>
+            <View style={styles.favoriteButtonContainer}>
+            <TouchableOpacity onPress={()=>{this.handleClickFavourite()}}>
+                <FontAwesome name="heart" size={40} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.profileButtonContainer}>
+              <TouchableOpacity onPress={()=>{this.handleClickProfile()}}>
+                <FontAwesome name="user-circle-o" size={40} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.searchContainer}>
+            <View style={styles.searchBox}>
+              <TouchableOpacity onPress={()=>{this.handleClickMenu()}}>
+                <FontAwesome name="bars" size={20} color="#414141" />
+              </TouchableOpacity>
+              <View style = {styles.deviderLine} />
+              <TextInput
+                style={styles.searchField}
+                placeholder="Vart ska du?"
+                value={this.state.searchField}
+                onChangeText={text => this.searchPlace(text, 'searchField')}/>
+            </View>
+          </View>
+        </View>
+        <View style={styles.bottomContainer}>
+            <TouchableOpacity onPress={()=>{this.handleClickPanic()}}>
+              <View style={styles.sosButton}>
+                <Text
+                  style={styles.sosText}
+                  >
+                  LARM - Ring 112
+                </Text>
+              </View>
+            </TouchableOpacity>
+        </View>
+      </View>
+		);
+	}
+}
+
+    /*
+    Old render
 
 		return (
 
@@ -951,6 +1039,7 @@ setUserReport(report){
 		);
 	}
 }
+*/
 
 const generatedMapStyle = [
   {
