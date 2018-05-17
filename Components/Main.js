@@ -285,8 +285,7 @@ shareMyLocation(){
    })
  }).
  then((response) => {
-   if(response.ok){
-     console.log("i fetchfr", response)
+if(response.ok){
      response.json().then(json =>{
        if(json[0].username !== undefined){
 
@@ -722,9 +721,6 @@ handleClickMenu = () => {
 
 
 	render() {
-    //console.log(this.state.friendsCoordinates)
-    //this.getInsecureLocation()
-
 
 
     //console.log(this.state.adamData)
@@ -862,7 +858,6 @@ handleClickMenu = () => {
           ref={c => this.mapView = c}
           onPress={this.onMapPress}
           loadingEnabled={true}>
-
 
           {destination}
           {this.state.adamData}
