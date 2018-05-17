@@ -62,9 +62,6 @@ export default class FavouritePlaces extends Component {
 
     componentDidMount() {
       this.fetchPlaces()
-      console.log("bröl?")
-
-
       for(var i = 0; i < testdata.length; i++){
         this.state.savedPlaces.push({
           'place': testdata[i].val,
