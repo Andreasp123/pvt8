@@ -249,9 +249,7 @@ confirmFriendRequest(){
   }
 
 //dela min och hämta användares coordinater nedan
-shareMyLocation(){
-    //console.log("sharegps i main", this.state.shareGPS)
-
+  shareMyLocation(){
     if(this.state.shareGPS){
 
       fetch('https://pvt.dsv.su.se/Group08/setUserLocation', {
@@ -274,8 +272,7 @@ shareMyLocation(){
   }
 
   fetchFriendShareLocation(){
-
-    fetch('https://pvt.dsv.su.se/Group08/getFriendLocations', {
+    fetch('https://pvt.dsv.su.se/Group08/getFriendsLocation', {
    method: 'POST',
    headers: {
       'Accept': 'application/json',
@@ -287,9 +284,8 @@ shareMyLocation(){
  then((response) => {
    if(response.ok){
      response.json().then(json =>{
-       if(json[0].username !== undefined){
-
-            let friend = json.map(friend => (
+       if(json.username !== undefined){
+            let friend = responseJson.map(friend => (
               <MapView.Marker
               key={friend.lat}
               coordinate={{
@@ -301,7 +297,6 @@ shareMyLocation(){
               pinColor={'green'}
                 />
             ));
-            //console.log("friend", friend)
             this.setState({
               friendsCoordinates: friend,
             })
@@ -311,7 +306,24 @@ shareMyLocation(){
 
  });
 }
-
+ // then((response) => {
+ //   if(response.ok){
+ //     response.json().then(json =>{
+ //       if(json.username !== undefined){
+ //         let friend = responseJson.map(friend => (
+ //              <MapView.Marker
+ //              key={friend.lat}
+ //              coordinate={{
+ //              latitude: friend.lat,
+ //              longitude: friend.lng,
+ //            }}
+ //            title={friend.username}
+ //            description={'Här är jag'}
+ //            pinColor={'green'}
+ //            />
+ //         ));
+ //       }}
+ //     }}
 
      // let friend = responseJson.map(friend => (
      //      <MapView.Marker
@@ -717,7 +729,6 @@ handleClickMenu = () => {
 
 
 	render() {
-    //console.log(this.state.friendsCoordinates)
     //this.getInsecureLocation()
     this.fetchPanicLocations()
     this.shareMyLocation()
@@ -848,8 +859,6 @@ handleClickMenu = () => {
           initialRegion={{
             latitude:this.state.testLat,
             longitude:this.state.testLong,
-            //latitude:this.state.testLat,
-            //longitude:this.state.testLong,
             // latitude:this.state.latitude,
             // longitude:this.state.longitude,
             latitudeDelta: 0.043,

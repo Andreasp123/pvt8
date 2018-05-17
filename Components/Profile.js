@@ -18,7 +18,7 @@ export default class Profile extends React.Component {
     this.state={
       username : this.props.navigation.state.params.username,
 
-      shareGPS: true,
+      shareGPS: false,
       shareLocation : 'Dela min plats',
       userReport: '',
       newFriend: '',
@@ -30,18 +30,20 @@ export default class Profile extends React.Component {
   }
 
   setShareLocation(){
-    console.log("vad är du för state nu",this.state.shareGPS)
     fetch('https://pvt.dsv.su.se/Group08/setShareLocationFriends', {
    method: 'POST',
    headers: {
      'Accept': 'application/json',
      'Content-Type': "application/json"},
    body: JSON.stringify({
+
       "username":  this.state.username,
       "setShareLocation": this.state.shareGPS
+
    })
  }).
    then((response) => {
+     console.log(this.state.shareGPS)
      if(response.ok){
        response.json().then(json =>{
        })
@@ -50,11 +52,10 @@ export default class Profile extends React.Component {
   }
 
   onClickShareLocation(){
-    console.log(this.state.username)
     if(this.state.shareLocation === 'Dela min plats'){
       this.setState({
         shareLocation : 'Sluta dela plats',
-        shareGPS: false
+        shareGPS: true
       })
       this.setShareLocation()
 
@@ -62,7 +63,7 @@ export default class Profile extends React.Component {
     } else {
       this.setState({
         shareLocation: 'Dela min plats',
-        shareGPS: true
+        shareGPS: false
       })
       this.setShareLocation()
     }
@@ -84,6 +85,7 @@ export default class Profile extends React.Component {
 
 //denna skall flyttas till mainOptions
 getInsecureLocation(){
+  console.log("i insecure")
   fetch('https://pvt.dsv.su.se/Group08/getInsecureLocations', {
  method: 'POST',
  headers: {
@@ -95,7 +97,7 @@ getInsecureLocation(){
 }).
  then((response) => response.json())
    .then((responseJson) => {
-     //console.log(responseJson)
+     console.log(responseJson)
    }
    //console.log('Done', response);
    )
@@ -104,6 +106,7 @@ getInsecureLocation(){
 
 //användarrapport, otrygg händelse
   reportEvent(){
+    // glöm ej call mot databas i setUserReport
     AlertIOS.prompt(
    'Rapportera otrygg händelse',
    'Vad har hänt?',
@@ -207,8 +210,7 @@ getInsecureLocation(){
   }
 
   exitProfileBtn(){
-console.log("vad är du för state nu",this.state.shareGPS)
-console.log("vad är du för state nu",this.state.shareGPS)
+    console.log("testlat", this.state.testLat, this.state.testLong)
     this.navigate({
     routeName: 'main',
     key: 'main',
@@ -224,7 +226,6 @@ console.log("vad är du för state nu",this.state.shareGPS)
 
 
   render() {
-
     this.getInsecureLocation()
 
     return (
@@ -240,7 +241,7 @@ console.log("vad är du för state nu",this.state.shareGPS)
     Button onPress={() => {
       this.addFriend();
     }}
-    title="Lägg till vän"
+    title="Rapportera händelse"
     />
 
     <Button style ={styles.shareBtn}
