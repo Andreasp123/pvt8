@@ -21,7 +21,9 @@ export default class FavouritePlaces extends Component {
         super(props);
         this.navigate = this.props.navigation.navigate;
         this.params = this.props.navigation.state.params;
+        username : this.props.navigation.state.params.username,
         this.state = {
+          username : this.props.navigation.state.params.username,
             placeArray: [],
             placeText: '',
             testArray: testdata,
@@ -33,6 +35,7 @@ export default class FavouritePlaces extends Component {
             testDest: '',
             testLatitude: "",
             testLongitude: "",
+
         };
     }
 
@@ -186,11 +189,14 @@ const {navigate} = this.props.navigation;
     }
 
   exitProfileBtn(){
+    console.log("i favourite", this.state.username)
    this.navigate({
    routeName: 'main',
    key: 'main',
    params: {
       username: this.state.username,
+      testLat: this.state.testLatitude,
+      testLong: this.state.testLongitude,
    }
  });
  }
