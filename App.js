@@ -19,6 +19,7 @@ import data from './Components/data';
 import { SwitchNavigator,TabNavigator, StackNavigator,createSwitchNavigator, createStackNavigator
   } from 'react-navigation';
 //import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-native';
+import Expo from 'expo';
 
 const mainOptions = createSwitchNavigator({
   main : Main,
@@ -57,38 +58,44 @@ const SwNavigator = createSwitchNavigator({
 
 })
 export default class App extends React.Component {
-
-  _handleBackPress() {
-    this.props.navigator.pop();
-  }
-
-
-
-  constructor(props){
+  constructor(props) {
     super(props);
     myString : 'detta är min string';
-
     this.state={
       testState : "it's a test",
-
+      loading : true
     }
     const enString = this.state.myString;
   }
 
+  async componentWillMount() {
+    await Expo.Font.loadAsync({
+      Roboto_Medium: require("./assets/fonts/RobotoMedium.ttf"),
+      Roboto_Bold: require("./assets/fonts/RobotoBold.ttf"),
+      Roboto_Light: require("./assets/fonts/RobotoLight.ttf")
+    });
+    this.setState({ loading: false });
+  }
 
+  _handleBackPress() {
+    this.props.navigator.pop();
+  }
 
   getTestState(){
     return this.state.testState;
   }
 
   render() {
-let stringTest = 'hej';
-    return (
-
-      //<mainOptions />
-      <SwNavigator />
-      //<Main/>
-    );
+    let stringTest = 'hej';
+    if (this.state.loading) {
+      return <Expo.AppLoading />;
+    }
+      return (
+        //<mainOptions />
+        <SwNavigator />
+        //<Main/>
+      );
+    
   }
 }
 
