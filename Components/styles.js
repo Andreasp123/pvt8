@@ -130,10 +130,10 @@ export default StyleSheet.create({
   },
   destinationInput:{
     height: 40,
-    width: 125,
-    position: 'absolute',
-    borderColor: 'powderblue',
-    borderWidth: 1
+    width:" 85%",
+
+    borderColor: 'white',
+
   },
   // customMapStyle:{
   // [
@@ -297,4 +297,4 @@ export default StyleSheet.create({
   //     ]
   //   }
   // ]
-  });
+});

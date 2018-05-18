@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
   Alert, Platform, Communications, Linking, LoginButton, TouchableHighlight,ExpandableView,
   Animation, Animated, AnimatedRegion, prompt, AlertIOS, StatusBar} from 'react-native';
-  import { FontAwesome } from '@expo/vector-icons';
+  import { FontAwesome, Polyline } from '@expo/vector-icons';
 
 //import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
 import { SwitchNavigator, TabNavigator, StackNavigator  } from 'react-navigation';
@@ -62,6 +62,7 @@ export default class Main extends Component {
       fetchedLamps: false,
       fetchWorkingLamps: false,
       fetchInsecureLocations: false,
+      placeHolderInput: 'Vart ska du?',
 
       testLat:this.props.navigation.state.params.testLat,
       testLong:this.props.navigation.state.params.testLong,
@@ -368,15 +369,15 @@ shareMyLocation(){
          this.setState({data : responseJson})
          let circles = responseJson.map(circle => (
               <MapView.Circle
-              key={circle.name}
+              key={circle.id}
               center={{
               latitude: circle.lat,
               longitude: circle.lng,
             }}
-            radius={3}
+            radius={1}
             strokeWidth = { 1 }
-            strokeColor = { '#1a66ff' }
-            fillColor = { '#1a66ff' }
+            strokeColor = { 'red' }
+            fillColor = { 'red' }
             animation = {Animated.bounce}
             />
 
@@ -578,7 +579,10 @@ setUserReport(report){
 handleClickMenu = () => {
    this.navigate({
      routeName: 'menu',
-     key: 'menu'
+     key: 'menu',
+     params: {
+        username: this.state.username
+     }
    })
 }
 
@@ -657,11 +661,59 @@ handleClickMenu = () => {
  }
 
  searchPlace(text, field){
-   this.setState({
-     searchField : text,
-   })
+
+   if(text.length > 4){
+     console.log(text)
+     this.setState({
+       searchField : text,
+     })
+     this.getCoordinatesFromGoogle(text)
+
+
+   }
    //console.log(this.state.searchField)
  }
+
+ getCoordinatesFromGoogle(text){
+   var dontscrewup = 'https://maps.googleapis.com/maps/api/geocode/json?address=lidingö&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M';
+   var preLocation = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+   var postLocation = "&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M";
+   var decidedDestination = text;
+   var combined = preLocation + decidedDestination + postLocation;
+   //console.log("nu så", preLocation + decidedDestination + postLocation )
+   return fetch(preLocation + decidedDestination + postLocation)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      this.setState({
+        googleResponse : responseJson,
+
+      })
+      console.log(this.state.googleResponse.results[0].address_components)
+      if(this.state.googleResponse.results[0].address_components[2].long_name !== undefined){
+        if(this.state.googleResponse.results[0].address_components[2].long_name == 'Sverige' ||
+        this.state.googleResponse.results[0].address_components[3].long_name == 'Sverige'
+      ){
+          console.log("= sverige")
+          this.setState({
+            coordinates: [
+              {
+                latitude: this.state.googleResponse.results[0].geometry.location.lat,
+                longitude: this.state.googleResponse.results[0].geometry.location.lng
+              },
+            ],
+          })
+        }
+      }
+
+    })
+    .catch((error) =>{
+      console.log(error);
+    });
+
+
+ }
+
+
 
  handleClick = () => {
    alert('Button clicked!');
@@ -785,8 +837,8 @@ handleClickMenu = () => {
       }}
       radius={3}
       strokeWidth = { 1 }
-      strokeColor = { 'red' }
-      fillColor = { 'red' }
+      strokeColor = { 'purple' }
+      fillColor = { 'purple' }
 
       />
 
@@ -919,11 +971,18 @@ handleClickMenu = () => {
                 <FontAwesome name="bars" size={20} color="#414141" />
               </TouchableOpacity>
               <View style = {styles.deviderLine} />
-              <TextInput
-                style={styles.searchField}
-                placeholder="Vart ska du?"
+
+
+                <TextInput
                 value={this.state.searchField}
-                onChangeText={text => this.searchPlace(text, 'searchField')}/>
+                placeholder={this.state.placeHolderInput} style ={styles.destinationInput}
+                onChangeText={text => this.searchPlace(text, 'searchField')}
+
+                />
+
+
+
+
             </View>
           </View>
         </View>
