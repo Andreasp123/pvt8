@@ -1,15 +1,21 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
-  Alert, Platform, Communications, Linking} from 'react-native';
+  Alert, Platform, Communications, Linking, StatusBar} from 'react-native';
 import ljusag from './lg.png';
 import Main from './Main';
+import Devider from './Utilities/Devider';
+import FacebookSignInButton from './Utilities/FacebookSignInButton';
+import GoogleSignInButton from './Utilities/GoogleSignInButton';
 //import { StackNavigator, SwitchNavigator  } from 'react-navigation';
 //import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
 import { SwitchNavigator,TabNavigator, StackNavigator  } from 'react-navigation';
+
 export default class LoggingIn extends React.Component {
-
-
+  //För att dölja den vita headern
+  static navigationOptions = {
+    header: null
+  }
   constructor(props){
     super(props);
     this.state={
@@ -166,83 +172,215 @@ export default class LoggingIn extends React.Component {
            testLongitude: position.coords.longitude,
 
          });
-
        },
 
        (error) => this.setState({ error: error.message }),
        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
      );
-
-
  }
 
-
-
   render() {
-
     return(
+      <View style={styles.loginScreenContainer}>
+      <StatusBar barStyle="dark-content"/>
+        <View style={styles.loginRoundBox}>
+          <View style={styles.logotypeContainer}>
+            <Image
+              source={require('../assets/logotype.png')}
+              resizeMode="contain"
+              style={{
+                resizeMode: 'contain',
+                height: 120
+              }}
+            />
+            <Text style={{fontFamily: 'Roboto_Bold', fontSize:20, color: "#555555", marginTop: 20 }}>
+              Välkommen till Ljusa Gatan!
+            </Text>
+            <Text style={{fontFamily: 'Roboto_Light', fontSize:15, color: "#555555"}}>
+            Den ljusaste vägen
+            </Text>
+          </View>
+          <View style={styles.loginFieldContainer}>
+              <TextInput
+                value={this.state.username}
+                placeholder={"Användarnamn"}
+                placeholderTextColor={"#929292"}
+                style ={styles.usernameInput}
+                onChangeText={text => this.getUsername(text, 'username')}
+              />
+              <TextInput
+                placeholderTextColor={"#929292"}
+                style ={styles.passwordInput}
+                value={this.state.password}
+                secureTextEntry
+                placeholder={"Lösenord"}
+                onChangeText={text => this.getPasswordText(text, 'password')}    
+              />
+              <TouchableOpacity
+                style ={styles.loginButton}
+                onPress={() => {
+                  this.signIn();
+                }}>
+                <Text>Logga in</Text>
+              </TouchableOpacity>
 
-      <View style= {styles.container}>
-
-      <View style ={styles.mainContainer}>
-
-
-      <TextInput
-      value={this.state.username}
-      placeholder={"Username"} style ={styles.input}
-      onChangeText={text => this.getUsername(text, 'username')}
-      />
-
-      <TextInput
-      value={this.state.password}
-      secureTextEntry
-      placeholder={"Password"} style ={styles.input}
-      onChangeText={text => this.getPasswordText(text, 'password')}
-      />
-
-
-      <Button
-      Button onPress={() => {
-        this.signIn();
-      }}
-      title="Sign in"
-      />
-
-      <Button
-      Button onPress={() => {
-        this.signInWithFacebook();
-      }}
-      title="Sign in with facebook"
-      />
-
-      <Button
-      Button onPress={() => {
-        this.signInWithGoogle();
-      }}
-      title="Sign in with Google"
-      />
-
-      </View>
-
-
-      <View style ={styles.footer}>
-      <Button styles ={styles.signUpBtn}
-      Button onPress={() => {
-        this.register();
-      }}
-      title="Sign up"
-      />
-      </View>
-
-
-
-
+              <TouchableOpacity
+                style ={styles.registerButton}
+                onPress={() => {
+                  this.signIn();
+                }}>
+                <Text>Registrera nytt konto</Text>
+              </TouchableOpacity>
+              
+              <Devider text="Eller logga in med" width="80%" />
+              <TouchableOpacity
+                style={{width: "100%", alignItems: "center", marginBottom: 5}}
+                onPress={() => {
+                  this.signInWithFacebook();
+                }}
+                >
+                <FacebookSignInButton/>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={{width: "100%", alignItems: "center"}}
+                onPress={() => {
+                  this.signInWithGoogle();
+                }}
+                >
+                <GoogleSignInButton/>
+              </TouchableOpacity> 
+          </View>
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  loginScreenContainer:{
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: "100%",
+    height: "100%"
+  },
+  loginRoundBox:{
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: "85%",
+    height: "85%",
+    backgroundColor: "#FFFFFF",
+    borderRadius:15,
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    shadowColor: 'black',
+    shadowOffset: { height: 0, width: 0 },
+  },
+  logotypeContainer:{
+    alignItems: 'center',
+  },
+  loginFieldContainer:{
+    width: "100%",
+    alignItems: "center",
+    marginTop: 20
+  },
+  usernameInput:{
+    height: 40,
+    width: "80%",
+    paddingLeft: 15,
+    backgroundColor: "#f0f0f0",
+    borderRadius:5,
+    fontSize: 15,
+    fontFamily: 'Roboto_Medium'
+  },
+  passwordInput:{
+    height: 40,
+    width: "80%",
+    paddingLeft: 15,
+    backgroundColor: "#f0f0f0",
+    borderRadius:5,
+    fontSize: 15,
+    fontFamily: 'Roboto_Medium',
+    marginTop: 5
+  },
+  loginButton:{
+    height: 40,
+    width: "80%",
+    backgroundColor: "#d9d15b",
+    borderRadius:5,
+    marginTop: 5,
+    alignItems: "center",
+    justifyContent: 'center',
+  },
+  registerButton:{
+    height: 40,
+    width: "50%",
+    backgroundColor: "#f0f0f0",
+    borderRadius:5,
+    marginTop: 5,
+    alignItems: "center",
+    justifyContent: 'center',
+  }
+  
+  
+});
+
+
+//Gammal return:
+/*
+
+<View style= {styles.container}>
+        <View style ={styles.mainContainer}>
+          <TextInput
+            value={this.state.username}
+            placeholder={"Username"} style ={styles.input}
+            onChangeText={text => this.getUsername(text, 'username')}
+          />
+          <TextInput
+            value={this.state.password}
+            secureTextEntry
+            placeholder={"Password"} style ={styles.input}
+            onChangeText={text => this.getPasswordText(text, 'password')}
+          />
+          <Button
+            onPress={() => {
+              this.signIn();
+            }}
+            title="Sign in"
+          />
+          <Button
+            onPress={() => {
+              this.signInWithFacebook();
+            }}
+            title="Sign in with facebook"
+          />
+
+          <Button
+            Button onPress={() => {
+              this.signInWithGoogle();
+            }}
+            title="Sign in with Google"
+          />
+        </View>
+
+        <View style ={styles.footer}>
+          <Button
+            styles ={styles.signUpBtn}
+            onPress={() => {
+              this.register();
+            }}
+            title="Sign up"
+          />
+        </View>
+      </View>
+
+*/
+
+/*
+  Gammal style:
   container:{
      flex: 1,
      flexDirection: 'column',
@@ -290,5 +428,4 @@ backgroundImage:{
   justifyContent: 'center',
   alignItems: 'center',
   width: 100 +"%"
-}
-});
+}*/
