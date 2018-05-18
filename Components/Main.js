@@ -547,7 +547,7 @@ shareMyLocation(){
    routeName: 'favouritePlaces',
    key: 'favouritePlaces',
    params: {
-      destination: 'kista'
+      username: this.state.username
    }
  });
 
@@ -747,6 +747,7 @@ handleClickMenu = () => {
 
 
 	render() {
+
     //console.log(this.state.friendsCoordinates)
     //this.getInsecureLocation()
 
