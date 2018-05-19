@@ -662,7 +662,7 @@ handleClickMenu = () => {
 
  searchPlace(text, field){
 
-   if(text.length > 4){
+   if(text.length > 3){
      console.log(text)
      this.setState({
        searchField : text,
@@ -688,10 +688,14 @@ handleClickMenu = () => {
         googleResponse : responseJson,
 
       })
+      console.log()
       console.log(this.state.googleResponse.results[0].address_components)
+
       if(this.state.googleResponse.results[0].address_components[2].long_name !== undefined){
-        if(this.state.googleResponse.results[0].address_components[2].long_name == 'Sverige' ||
-        this.state.googleResponse.results[0].address_components[3].long_name == 'Sverige'
+        if(this.state.googleResponse.results[0].address_components[1].long_name == 'Sverige' ||
+        this.state.googleResponse.results[0].address_components[2].long_name == 'Sverige' ||
+        this.state.googleResponse.results[0].address_components[3].long_name == 'Sverige' ||
+        this.state.googleResponse.results[0].address_components[4].long_name == 'Sverige'
       ){
           console.log("= sverige")
           this.setState({
