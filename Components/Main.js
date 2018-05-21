@@ -59,6 +59,7 @@ export default class Main extends Component {
         }
       ],
 
+      checkedMap: false,
       fetchedLamps: false,
       fetchWorkingLamps: false,
       fetchInsecureLocations: false,
@@ -71,6 +72,9 @@ export default class Main extends Component {
       googleResponse: [],
       userReport: '',
       friendRequests: [],
+
+      mapToUse:[],
+      current: 'night',
 
       destinationLocation : [],
       searchField: '',
@@ -395,8 +399,60 @@ shareMyLocation(){
        })
     }
   }
+  //
+  // setMap(){
+  //
+  // //    this.setState({mapToUse : generatedMapStyle})
+  //
+  //   console.log("i setmap")
+  //
+  //     console.log("i setmap")
+  //     fetch('https://pvt.dsv.su.se/Group08/getSunriseSunset', {
+  //    method: 'POST',
+  //    headers: {
+  //      'Accept' : "text/plain",
+  //       //'Accept' : "application/json",
+  //      'Content-Type': "application/json"},
+  //      //'Accept': 'text/plain',
+  //      //'Content-Type': 'text/plain'},
+  //    body: JSON.stringify({
+  //
+  //       latitude: this.state.latitude,
+  //       longitude: this.state.longitude
+  //    })
+  //  }).
+  //    then((response) => {
+  //      //console.log("response i setmap", response)
+  //      if(response.ok){
+  //        response.json().then(json =>{
+  //          console.log(json.current)
+  //          if(json.current === 'day'){
+  //
+  //            console.log("det är day")
+  //            this.setState({current: 'day'})
+  //
+  //          }
+  //
+  //        })
+  //
+  //      }
+  //
+  //      //console.log('Done', response);
+  //
+  //    });
+  //
+  //
+  // }
+
+  // changeMap(){
+  //   if(this.state.current === 'day'){
+  //     this.setState({mapToUse : generatedMapStyle})
+  //   }
+  //
+  // }
 
   componentDidMount() {
+
     this.shareMyLocation()
     this.fetchFriendShareLocation()
     this.aTestData()
@@ -668,8 +724,6 @@ handleClickMenu = () => {
        searchField : text,
      })
      this.getCoordinatesFromGoogle(text)
-
-
    }
    //console.log(this.state.searchField)
  }
@@ -688,16 +742,12 @@ handleClickMenu = () => {
         googleResponse : responseJson,
 
       })
-      console.log()
-      console.log(this.state.googleResponse.results[0].address_components)
-
       if(this.state.googleResponse.results[0].address_components[2].long_name !== undefined){
         if(this.state.googleResponse.results[0].address_components[1].long_name == 'Sverige' ||
         this.state.googleResponse.results[0].address_components[2].long_name == 'Sverige' ||
         this.state.googleResponse.results[0].address_components[3].long_name == 'Sverige' ||
         this.state.googleResponse.results[0].address_components[4].long_name == 'Sverige'
       ){
-          console.log("= sverige")
           this.setState({
             coordinates: [
               {
@@ -723,47 +773,72 @@ handleClickMenu = () => {
    alert('Button clicked!');
  }
 
+
  handleClickPanic = () => {
-   fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
-  method: 'POST',
-  headers: {
-    'Accept' : "application/json",
-    'Content-Type': "application/json"},
-    // 'Accept': 'text/plain',
-    // 'Content-Type': 'text/plain'},
-  body: JSON.stringify({
-    "latitude": this.state.latitude,
+//    fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
+//   method: 'POST',
+//   headers: {
+//     'Accept' : "application/json",
+//     'Content-Type': "application/json"},
+//     // 'Accept': 'text/plain',
+//     // 'Content-Type': 'text/plain'},
+//   body: JSON.stringify({
+//     "latitude": this.state.latitude,
+//
+//     //latitude: this.state.originLatitude,
+//     "longitude": this.state.longitude
+//
+//   })
+// }).
+//   then((response) => {
+//     if(response.ok === false){
+//
+//       console.log("no go")
+//     }
+//     //console.log('Done', response);
+//   });
 
-    //latitude: this.state.originLatitude,
-    "longitude": this.state.longitude
-
-  })
-}).
-  then((response) => {
-    if(response.ok === false){
-
-      console.log("no go")
-    }
-    //console.log('Done', response);
-  });
-   var ring = false
    Alert.alert(
   'SKRIK OCH PANIK',
   'Är du säker?',
   [
     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel', },
-    {text: 'OK', onPress: () => console.log('OK Pressed'), ring: true},
+    {text: 'OK', onPress: this.panicClicked.bind(this),},
+    //onPress: this.setUserReport.bind(this),
   ],
   { cancelable: false }
-)
-  if(ring){
-    const args = {
-   number: '112',
-   prompt: false
- }
- call(args).catch(console.error)
-  }
+  )
 }// !handleClickPanic
+
+//hjälpmetod till handleClickPanic
+panicClicked(){
+  fetch('https://pvt.dsv.su.se/Group08/sendPanicLocation', {
+ method: 'POST',
+ headers: {
+   'Accept' : "application/json",
+   'Content-Type': "application/json"},
+   // 'Accept': 'text/plain',
+   // 'Content-Type': 'text/plain'},
+ body: JSON.stringify({
+   "latitude": this.state.latitude,
+
+   //latitude: this.state.originLatitude,
+   "longitude": this.state.longitude
+
+ })
+}).
+ then((response) => {
+ });
+ this.callIfPanic()
+}
+//hjälpmetod till handleClickPanic
+callIfPanic(){
+  const args = {
+ number: '112',
+ prompt: false
+}
+call(args).catch(console.error)
+}
 
 
 	// onMapPress = (e) => {
@@ -803,6 +878,7 @@ handleClickMenu = () => {
 
 
 	render() {
+
 
     //console.log(this.state.friendsCoordinates)
     //this.getInsecureLocation()
@@ -930,6 +1006,7 @@ handleClickMenu = () => {
         {/* Map view i helskärm */}
         <MapView style={styles.map}
           provider = { MapView.PROVIDER_GOOGLE }
+          //customMapStyle = { this.state.mapToUse }
           customMapStyle = { generatedMapStyle }
           initialRegion={{
             latitude:this.state.testLat,
