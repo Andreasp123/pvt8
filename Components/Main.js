@@ -63,7 +63,10 @@ export default class Main extends Component {
       fetchedLamps: false,
       fetchWorkingLamps: false,
       fetchInsecureLocations: false,
+      fetchSecureLocations: false,
       placeHolderInput: 'Vart ska du?',
+
+      secureLocations:[],
 
       testLat:this.props.navigation.state.params.testLat,
       testLong:this.props.navigation.state.params.testLong,
@@ -72,6 +75,7 @@ export default class Main extends Component {
       googleResponse: [],
       userReport: '',
       friendRequests: [],
+
 
       mapToUse:[],
       current: 'night',
@@ -135,7 +139,6 @@ export default class Main extends Component {
 
   //Ny
   checkFriendRequests(){
-    console.log("i checkfriend")
     fetch('https://pvt.dsv.su.se/Group08/getFriendRequests', {
    method: 'POST',
    headers: {
@@ -148,7 +151,6 @@ export default class Main extends Component {
    })
  }).
  then((response) => {
-   console.log(response)
    if(response.ok){
      response.json().then(json =>{
 
@@ -160,7 +162,6 @@ export default class Main extends Component {
        }
 
        if(this.state.friendsName !== undefined){
-         console.log("kom hit")
          this.acceptFriendRequest(this.state.friendsName)
        }
      })
@@ -200,7 +201,7 @@ confirmFriendRequest(){
   }).
   then((response) => {
    if(response.ok){
-     console.log(response)
+
    }
    //console.log('Done', response);
   });
@@ -300,7 +301,6 @@ shareMyLocation(){
  }).
  then((response) => {
    if(response.ok){
-     console.log("i fetchfr", response)
      response.json().then(json =>{
        if(json[0].username !== undefined){
 
@@ -459,6 +459,7 @@ shareMyLocation(){
     this.fetchPanicLocations()
     this.checkFriendRequests()
     this.getInsecureLocation()
+    this.getSecureLocation()
     this.fetchPanicLocations()
     this.shareMyLocation()
     this.fetchNotWorkingLamps()
@@ -567,7 +568,7 @@ shareMyLocation(){
    }).
     then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson)
+
         this.setState({
           insecureData: responseJson
         })
@@ -580,7 +581,7 @@ shareMyLocation(){
            }}
            title={'Otrygg händelse' + markers.key}
            description={markers.val}
-           pinColor={'purple'}
+           pinColor={'red'}
 
 
            />
@@ -590,14 +591,63 @@ shareMyLocation(){
           insecureLocationsData: insecureMarkers,
         })
       }
+
       //console.log('Done', response);
     );
    }
+
    this.setState({
      fetchInsecureLocations: true
    })
 
   }
+
+  getSecureLocation(){
+    console.log("i get secure")
+    if(!this.state.fetchSecureLocations){
+      fetch('https://pvt.dsv.su.se/Group08/getSecureLocations', {
+     method: 'POST',
+     headers: {
+       'Accept' : "application/json",
+       //'Accept': 'text/plain',
+       'Content-Type': "application/json"},
+       // 'Accept': 'text/plain',
+       // 'Content-Type': 'text/plain'},
+    }).
+     then((response) => response.json())
+       .then((responseJson) => {
+         console.log("secure", responseJson)
+
+         let secureMarkers = responseJson.map(markers => (
+              <MapView.Marker
+              key={markers.lat}
+              coordinate={{
+              latitude: markers.lat,
+              longitude: markers.lng,
+            }}
+            title={''}
+            description={markers.val}
+            pinColor={'green'}
+
+
+            />
+
+         ));
+         this.setState({
+           secureLocations: secureMarkers,
+         })
+
+       }
+
+       //console.log('Done', response);
+     );
+    }
+
+    this.setState({
+      fetchSecureLocations: true
+    })
+
+   }
 
  handleClickFavourite = () => {
    this.navigate({
@@ -625,7 +675,7 @@ shareMyLocation(){
 
 //denna ska tas bort härifrån, finns i profile
 setUserReport(report){
-  console.log("här ens?")
+
   this.setState({
     userReport: report
   })
@@ -682,8 +732,7 @@ handleClickMenu = () => {
   // );
  }
  setNewFriend(sendToFriend){
-   console.log("new friend", sendToFriend)
-   console.log("username", this.state.username)
+
    this.setState({
      sendToFriend: sendToFriend
    })
@@ -702,7 +751,7 @@ handleClickMenu = () => {
   })
 }).
   then((response) => {
-    console.log(response)
+
     if(response.ok === false){
       console.log("no go")
     }else{
@@ -1029,6 +1078,7 @@ call(args).catch(console.error)
           {this.state.friendsCoordinates}
           {panicMarker}
           {this.state.insecureLocationsData}
+          {this.state.secureLocations}
 
         </MapView>
 

@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, NavigatorIOS, Button, Alert, Prompt, prompt, AlertIOS
+import { StyleSheet, Text, View, NavigatorIOS, Button, Alert, Prompt, prompt, AlertIOS, TouchableHighlight
  } from 'react-native';
+ import {LoginButton, ShareDialog} from 'react-native';
 
 
 import { SwitchNavigator,TabNavigator, StackNavigator,createSwitchNavigator, createStackNavigator
@@ -15,9 +16,9 @@ export default class Profile extends React.Component {
     this.navigate = this.props.navigation.navigate;
     this.params = this.props.navigation.state.params;
 
+
     this.state={
       username : this.props.navigation.state.params.username,
-
       shareGPS: true,
       shareLocation : 'Dela min plats',
       userReport: '',
@@ -25,9 +26,10 @@ export default class Profile extends React.Component {
       latitude: '',
       longitude: '',
 
-
     }
   }
+
+
 
   setShareLocation(){
     console.log("vad är du för state nu",this.state.shareGPS)
@@ -155,6 +157,57 @@ getInsecureLocation(){
      });
     }
 
+    reportSafePlace(){
+      AlertIOS.prompt(
+     'Det här var ju trevligt',
+     'Vad gillar du med denna platsen?',
+     [
+       {
+         text: 'Avbryt',
+         onPress: () => console.log('Cancel Pressed'), style: 'Avbryt',
+         //Skulle det crascha här så byt ut text och style från avbryt till cancel
+       },
+       {
+         text: 'Dela', onPress: this.setSafePlace.bind(this),
+       },
+     ],
+     );
+    }
+
+    setSafePlace(report){
+      console.log("här?")
+      this.setState({
+        userReport: report
+      })
+      fetch('https://pvt.dsv.su.se/Group08/addSecureLocation', {
+     method: 'POST',
+     headers: {
+        'Accept': 'application/json',
+       'Content-Type': "application/json"},
+     body: JSON.stringify({
+
+        "username":  this.state.username,
+        "locationname": this.state.userReport,
+        "latitude": this.state.latitude,
+        "longitude": this.state.longitude,
+
+     })
+   }).
+     then((response) => {
+       console.log(response)
+
+       if(response.ok){
+         response.json().then(json =>{
+
+         })
+
+       }
+
+       //console.log('Done', response);
+
+     });
+    }
+
   //lägga till en vän
   addFriend(){
     AlertIOS.prompt(
@@ -235,6 +288,13 @@ console.log("vad är du för state nu",this.state.shareGPS)
     }}
     title="Rapportera händelse"
     />
+    <Button style ={styles.reportEvent}
+    Button onPress={() => {
+      this.reportSafePlace();
+    }}
+    title="Dela trygg plats"
+    />
+
 
     <Button style ={styles.addFriendBtn}
     Button onPress={() => {
@@ -260,6 +320,8 @@ console.log("vad är du för state nu",this.state.shareGPS)
 
 
 
+
+
     </View>
     );
   }
@@ -279,7 +341,14 @@ const styles = StyleSheet.create({
   exitBtn:{
     top: 115
   },
+  tweetBtn:{
+    top: 155
+  },
   FriendBtn:{
     top: 155
-  }
+  },
+  shareText: {
+    fontSize: 20,
+    margin: 10,
+  },
 });
