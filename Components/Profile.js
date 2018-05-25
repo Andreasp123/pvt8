@@ -25,6 +25,9 @@ export default class Profile extends React.Component {
       newFriend: '',
       latitude: '',
       longitude: '',
+      createMeetUp: false,
+      friendToMeet: '',
+
 
     }
   }
@@ -32,7 +35,6 @@ export default class Profile extends React.Component {
 
 
   setShareLocation(){
-    console.log("vad är du för state nu",this.state.shareGPS)
     fetch('https://pvt.dsv.su.se/Group08/setShareLocationFriends', {
    method: 'POST',
    headers: {
@@ -208,6 +210,72 @@ getInsecureLocation(){
      });
     }
 
+    // skapa mötesplats
+    meetFriend(){
+      AlertIOS.prompt(
+     'Vem ska du träffa?',
+     'Användarnamn:',
+     [{
+         text: 'Avbryt',
+         onPress: () => console.log('Cancel Pressed'), style: 'cancel',
+       },
+       {
+         text: 'OK', onPress: this.meetAtPlace.bind(this),
+       },
+     ],
+     );
+    }
+
+    meetAtPlace(friend){
+      this.setState({friendToMeet: friend,
+        shareGPS: true
+      })
+
+      AlertIOS.prompt(
+     'Vart ska ni träffas?',
+     'Destination:',
+     [{
+         text: 'Avbryt',
+         onPress: () => console.log('Cancel Pressed'), style: 'cancel',
+       },
+       {
+         text: 'OK', onPress: this.askFriendToMeet.bind(this),
+       },
+     ],
+     );
+    }
+
+    askFriendToMeet(destination){
+      this.setState({
+        meetingPlace: destination,
+        createMeetUp: true,
+      })
+
+      fetch('https://pvt.dsv.su.se/Group08/meetingRequest', {
+     method: 'POST',
+     headers: {
+       //'Accept' : "application/json",
+       'Accept': 'application/json',
+       'Content-Type': "application/json"},
+       // 'Accept': 'text/plain',
+       // 'Content-Type': 'text/plain'},
+     body: JSON.stringify({
+       "username_sender": this.state.username,
+       "username_receiver": this.state.friendToMeet,
+       "destination": this.state.meetingPlace,
+       "meeting_name": this.state.meetingPlace
+
+     })
+   }).
+     then((response) => {
+       console.log(response)
+
+       //console.log('Done', response);
+     });
+    }
+
+
+
   //lägga till en vän
   addFriend(){
     AlertIOS.prompt(
@@ -260,8 +328,8 @@ getInsecureLocation(){
   }
 
   exitProfileBtn(){
-console.log("vad är du för state nu",this.state.shareGPS)
-console.log("vad är du för state nu",this.state.shareGPS)
+    console.log("friendtomeet",this.state.friendToMeet)
+    console.log("meetingplace",this.state.meetingPlace)
     this.navigate({
     routeName: 'main',
     key: 'main',
@@ -271,6 +339,8 @@ console.log("vad är du för state nu",this.state.shareGPS)
        //dessa under ska byta namn sen men måste bytas i alla klasser då så får heta så test tills vidare
        testLat: this.state.latitude,
        testLong: this.state.longitude,
+       createMeetUp: this.state.createMeetUp,
+       meetingPlace: this.state.meetingPlace
     }
   });
   }
@@ -310,12 +380,21 @@ console.log("vad är du för state nu",this.state.shareGPS)
     title={this.state.shareLocation}
     />
 
+    <Button style ={styles.shareBtn}
+    Button onPress={() => {
+      this.meetFriend();
+    }}
+    title={"Skapa mötesplats"}
+    />
+
     <Button style ={styles.exitBtn}
     Button onPress={() => {
       this.exitProfileBtn();
     }}
     title="Exit"
     />
+
+
 
 
 

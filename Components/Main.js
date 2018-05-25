@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Scrollview,
   TouchableOpacity, Button, ImageButton, Image, TextField, ScrollView, Dimensions,
   Alert, Platform, Communications, Linking, LoginButton, TouchableHighlight,ExpandableView,
-  Animation, Animated, AnimatedRegion, prompt, AlertIOS, StatusBar} from 'react-native';
+  Animation, Animated, AnimatedRegion, prompt, AlertIOS, StatusBar } from 'react-native';
   import { FontAwesome, Polyline } from '@expo/vector-icons';
 
 //import {TabNavigator, SwitchNavigator, Icon, NavigatorIOS} from 'react-native';
@@ -51,6 +51,11 @@ export default class Main extends Component {
 		this.state = {
       username : this.props.navigation.state.params.username,
       shareGPS: this.props.navigation.state.params.shareGPS,
+      meetingPlace: this.props.navigation.state.params.meetingPlace,
+      createMeetUp: this.props.navigation.state.params.createMeetUp,
+      acceptMeetingRequest: false,
+      fetchedMeetUps: false,
+      meetUpPlace: '',
 
       friendToMeet: [
         {
@@ -59,12 +64,17 @@ export default class Main extends Component {
         }
       ],
 
+
+      testCoordinates:[],
+
       checkedMap: false,
       fetchedLamps: false,
       fetchWorkingLamps: false,
       fetchInsecureLocations: false,
       fetchSecureLocations: false,
       placeHolderInput: 'Vart ska du?',
+      workingLamps:[],
+      roadDescription:[],
 
       secureLocations:[],
 
@@ -75,6 +85,8 @@ export default class Main extends Component {
       googleResponse: [],
       userReport: '',
       friendRequests: [],
+      friendsCoordinatesMeetUp:[],
+      friendsLocation:[],
 
 
       mapToUse:[],
@@ -89,6 +101,7 @@ export default class Main extends Component {
       friendsCoordinatesNotAccepted: [],
       friendsCoordinatesAccepted: [],
       friendsCoordinates: [],
+      friendsOrigin:[],
 
       dataSource:[],
 
@@ -113,8 +126,6 @@ export default class Main extends Component {
         latitude: this.props.navigation.state.params.testLat,
         longitude: this.props.navigation.state.params.testLong,
         }
-
-
 			],
 		};
 
@@ -153,6 +164,7 @@ export default class Main extends Component {
  then((response) => {
    if(response.ok){
      response.json().then(json =>{
+       console.log("i checkfriends",json)
 
        if(json[0] !== undefined){
          this.setState({
@@ -161,7 +173,8 @@ export default class Main extends Component {
          })
        }
 
-       if(this.state.friendsName !== undefined){
+       if(json[0].username !== undefined){
+         console.log("friendsname inte undefined", this.state.friendsName)
          this.acceptFriendRequest(this.state.friendsName)
        }
      })
@@ -172,6 +185,8 @@ export default class Main extends Component {
 }
 //Hjälpmetod till checkFriendRequests
 acceptFriendRequest(friendsName){
+  console.log("är i accept där jag inte borde vara")
+
   Alert.alert(`${friendsName} vill lägga till dig som vän`, undefined, [
   {
     text: 'Avböj',
@@ -196,7 +211,7 @@ confirmFriendRequest(){
   body: JSON.stringify({
 
     "username_sender": this.state.friendsName,
-    "username_receiver": 'user1'
+    "username_receiver": this.state.username
   })
   }).
   then((response) => {
@@ -207,13 +222,172 @@ confirmFriendRequest(){
   });
 }
 
-aTestData(){
+//everything meetingPlace
+checkMeetUps(){
+  console.log("i checkMeetUps")
+  if(!this.state.fetchedMeetUps){
+    this.setState({fetchedMeetUps: true})
+    fetch('https://pvt.dsv.su.se/Group08/getMeetingRequests', {
+   method: 'POST',
+   headers: {
+     'Accept' : "application/json",
+     'Content-Type': "application/json"},
+     // 'Accept': 'text/plain',
+     // 'Content-Type': 'text/plain'},
+   body: JSON.stringify({
+     "username": this.state.username
+   })
+ }).
+
+ then((response) => {
+   console.log(response)
+   if(response.ok){
+     response.json().then(json =>{
+       console.log("i checkmeetups", json)
+       console.log("json.username",json[0].username)
+       if(json[0].username !== undefined){
+         this.setState({friendsName: json[0].username})
+         this.acceptFriendsMeeting(json[0].username)
+       }
+
+     })
+   }
+  });
+}
+}
+//Hjälpmetod till checkFriendRequests
+acceptFriendsMeeting(friendsName){
+  console.log("i acceptfriendsMeeting", friendsName)
+Alert.alert(`${friendsName} vill skapa en mötesplats`, undefined, [
+{
+  text: 'Avböj',
+  onPress: () => console.log('Cancel Pressed'),
+  style: 'cancel',
+},
+{ text: 'Acceptera', onPress: () => this.confirmFriendsMeeting(this) },
+]);
+}
+
+confirmFriendsMeeting(){
+console.log("i confirm")
+console.log("i confirm friendsname", this.state.friendsName)
+fetch('https://pvt.dsv.su.se/Group08/confirmMeetingRequest', {
+method: 'POST',
+headers: {
+  'Accept': 'application/json',
+ // 'Accept' : "application/json",
+ 'Content-Type': "application/json"},
+ // 'Accept': 'text/plain',
+ // 'Content-Type': 'text/plain'},
+body: JSON.stringify({
+
+  // "username_sender": this.state.username,
+  // "username_receiver": this.state.friendsName
+
+  "username_sender": this.state.friendsName,
+  "username_receiver": this.state.username
+})
+}).
+then((response) => {
+ if(response.ok){
+   response.json().then(json =>{
+     console.log("i confirm meeting", json)
+   })
+ }
+ //console.log('Done', response);
+});
+
+this.getMeetingPlaces()
+}
+
+getMeetingPlaces(){
+
+  console.log("kom till getMeetingPlaces")
+  fetch('https://pvt.dsv.su.se/Group08/getMeetingPlaces', {
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+   // 'Accept' : "application/json",
+   'Content-Type': "application/json"},
+   // 'Accept': 'text/plain',
+   // 'Content-Type': 'text/plain'},
+  body: JSON.stringify({
+    "username": this.state.username
+  })
+  })
+  .then((response) => response.json())
+  .then((json) =>{
+    var lastPlace = json.length-1;
+    console.log(json[lastPlace].val)
+
+
+    this.setState({
+      meetUpPlace: json[lastPlace].val,
+    })
+    //console.log(json[0].val)
+    this.setMeetUpPlace()
+  });
+
+}
+
+setMeetUpPlace(){
+  console.log("meetupplace", this.state.meetUpPlace)
+
+  var dontscrewup = 'https://maps.googleapis.com/maps/api/geocode/json?address=lidingö&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M';
+  var preLocation = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+  var postLocation = "&key=AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M";
+  var decidedDestination = this.state.meetUpPlace;
+  var combined = preLocation + decidedDestination + postLocation;
+  console.log("combined", combined)
+  //console.log("nu så", preLocation + decidedDestination + postLocation )
+  return fetch(preLocation + decidedDestination + postLocation)
+   .then((response) => response.json())
+   .then((responseJson) => {
+     this.setState({
+       gResponse : responseJson,
+
+     })
+     console.log(responseJson)
+     if(this.state.gResponse.results[0].geometry.location.lat !== undefined){
+         this.setState({
+           coordinates: [
+             {
+               latitude: this.state.gResponse.results[0].geometry.location.lat,
+               longitude: this.state.gResponse.results[0].geometry.location.lng
+             },
+           ],
+           friendsCoordinatesMeetUp: [
+             {
+               latitude: this.state.gResponse.results[0].geometry.location.lat,
+               longitude: this.state.gResponse.results[0].geometry.location.lng
+             },
+           ],
+         })
+
+     }
+
+   })
+   .catch((error) =>{
+     console.log(error);
+   });
+   this.fetchFriendShareLocation()
+}
+
+fetchAndShareLocations(){
+  if(this.state.friendsCoordinatesMeetUp !== undefined || this.state.friendsCoordinatesMeetUp !== ''){
+    this.fetchFriendShareLocation()
+    this.shareMyLocation()
+  }
+}
+
+
+getWorkingLamps(){
   if(!this.state.fetchWorkingLamps){
     return fetch('https://pvt.dsv.su.se/Group08/getLamps?working=true')
        .then((response) => response.json())
        .then((responseJson) => {
-         this.setState({testData : responseJson})
-         let testAdam1 = responseJson.map(circle => (
+         this.setState({testCoordinates : responseJson})
+         let wLamps = responseJson.map(circle => (
               <MapView.Circle
               key={circle.id}
               center={{
@@ -228,20 +402,33 @@ aTestData(){
             />
           ));
            this.setState({
-             adamData : testAdam1,
+             workingLamps : wLamps,
            });
        })
        .catch((error) =>{
          console.error(error);
        });
   }
+  console.log("testc i getworking", this.state.testCoordinates)
   this.setState({
     fetchWorkingLamps: true
   })
-
  //  https://pvt.dsv.su.se/Group08/getRoute?name=Frutunnelbana
-
  }
+
+ fetchFromAlgorithm(){
+   return fetch('https://pvt.dsv.su.se/Group08/getRoute?name=Frutunnelbana')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({roadDescription : responseJson})
+
+      })
+      .catch((error) =>{
+        console.error(error);
+      });
+ }
+
+
 
   fetchPanicLocations(){
     return fetch('https://pvt.dsv.su.se/Group08/getPanicLocations')
@@ -304,9 +491,10 @@ shareMyLocation(){
      response.json().then(json =>{
        if(json[0].username !== undefined){
 
+
             let friend = json.map(friend => (
               <MapView.Marker
-              key={friend.lat}
+              key={friend.dateTime}
               coordinate={{
               latitude: friend.lat,
               longitude: friend.lng,
@@ -319,13 +507,30 @@ shareMyLocation(){
             //console.log("friend", friend)
             this.setState({
               friendsCoordinates: friend,
+              friendsLocation:[{
+                latitude:json[0].lat,
+                longitude: json[0].lng
+              }]
+
             })
+
+            // if(json.username === this.state.friendsName){
+            //   friendToMeet:[{
+            //     latitude: json.lat,
+            //     longitude: json.lng
+            //   }]
+            // }
+
+
+
        }
      })
    }
 
  });
 }
+
+
 
 
      // let friend = responseJson.map(friend => (
@@ -452,10 +657,11 @@ shareMyLocation(){
   // }
 
   componentDidMount() {
-
+    this.fetchAndShareLocations()
+    this.checkMeetUps()
     this.shareMyLocation()
     this.fetchFriendShareLocation()
-    this.aTestData()
+    this.getWorkingLamps()
     this.fetchPanicLocations()
     this.checkFriendRequests()
     this.getInsecureLocation()
@@ -463,6 +669,7 @@ shareMyLocation(){
     this.fetchPanicLocations()
     this.shareMyLocation()
     this.fetchNotWorkingLamps()
+
 
     Animated.timing(this.state.animatedTop, {
     toValue: 200, // position where you want the component to end up
@@ -574,7 +781,7 @@ shareMyLocation(){
         })
         let insecureMarkers = responseJson.map(markers => (
              <MapView.Marker
-             key={markers.lat}
+             key={markers.lat+ markers.lng}
              coordinate={{
              latitude: markers.lat,
              longitude: markers.lng,
@@ -616,7 +823,7 @@ shareMyLocation(){
     }).
      then((response) => response.json())
        .then((responseJson) => {
-         console.log("secure", responseJson)
+
 
          let secureMarkers = responseJson.map(markers => (
               <MapView.Marker
@@ -625,7 +832,7 @@ shareMyLocation(){
               latitude: markers.lat,
               longitude: markers.lng,
             }}
-            title={''}
+            title={markers.username}
             description={markers.val}
             pinColor={'green'}
 
@@ -923,10 +1130,36 @@ call(args).catch(console.error)
 	}
 
 
+  // let markers = data.map(lamps => (
+  //      <MapView.Marker
+  //      key={lamps.id}
+  //      coordinate={{
+  //      latitude: lamps.lat,
+  //      longitude: lamps.lng,
 
 
 
 	render() {
+
+
+
+    // let poltheline = this.state.workingLamps.map(description => (
+    //      <MapView.Polyline
+    //      key={description.id}
+    //      coordinates={[
+    //           { latitude: description.lat, longitude: description.lng },
+    //
+    //         ]}
+    //         strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+    //   strokeColors={[
+    //     '#7F0000',
+    //     '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+    //
+    //   ]}
+    //   strokeWidth={6}
+    // />
+    //
+    //   ));
 
 
     //console.log(this.state.friendsCoordinates)
@@ -953,6 +1186,8 @@ call(args).catch(console.error)
 // ));
 
     //console.log("här", this.state.testDest)
+
+
 
     // if(street.length > 1){
       let panicMarker = this.state.panicData.map(panic => (
@@ -1019,7 +1254,6 @@ call(args).catch(console.error)
       <MapViewDirections
       key={destination.latitude}
         origin={this.state.origin[0]}
-        //origin={this.state.origin}
         destination={this.state.coordinates[0]}
         apikey={GOOGLE_MAPS_APIKEY}
         strokeWidth={3}
@@ -1030,11 +1264,13 @@ call(args).catch(console.error)
 
     ));
 
-    let meetUp = this.state.coordinates.map(destination => (
+
+
+    let meetUp = this.state.friendsCoordinatesMeetUp.map(destination => (
       <MapViewDirections
       key={destination.latitude}
-        origin={this.state.friendToMeet[0]}
-        //origin={this.state.origin}
+        //origin={this.state.friendToMeet[0]}
+        origin={this.state.friendsLocation[0]}
         destination={this.state.coordinates[0]}
         apikey={GOOGLE_MAPS_APIKEY}
         strokeWidth={3}
@@ -1044,7 +1280,6 @@ call(args).catch(console.error)
       />
 
     ));
-
         //Grafiska element
 		return (
 
@@ -1073,12 +1308,17 @@ call(args).catch(console.error)
 
 
           {destination}
-          {this.state.adamData}
+          {this.state.workingLamps}
           {this.state.dataSource}
           {this.state.friendsCoordinates}
           {panicMarker}
           {this.state.insecureLocationsData}
           {this.state.secureLocations}
+          {meetUp}
+
+
+
+
 
         </MapView>
 
