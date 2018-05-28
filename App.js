@@ -57,6 +57,8 @@ const SwNavigator = createSwitchNavigator({
   menu : Menu
 
 })
+
+console.disableYellowBox = true;
 export default class App extends React.Component {
   constructor(props) {
     super(props);
