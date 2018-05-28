@@ -1330,11 +1330,12 @@ call(args).catch(console.error)
                 <FontAwesome name="heart" size={40} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
-            <View style={styles.profileButtonContainer}>
+            {/*<View style={styles.profileButtonContainer}>
               <TouchableOpacity onPress={()=>{this.handleClickProfile()}}>
                 <FontAwesome name="user-circle-o" size={40} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
+            */}
           </View>
           <View style={styles.searchContainer}>
             <View style={styles.searchBox}>
