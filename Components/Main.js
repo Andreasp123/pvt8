@@ -490,6 +490,10 @@ shareMyLocation(){
    if(response.ok){
      response.json().then(json =>{
        if(json[0].username !== undefined){
+         var test = json.length;
+         console.log(json.length,"1111111")
+         console.log(json[test-1].lat, "bröl")
+         console.log("här är det fel", json)
 
 
             let friend = json.map(friend => (
@@ -508,8 +512,9 @@ shareMyLocation(){
             this.setState({
               friendsCoordinates: friend,
               friendsLocation:[{
-                latitude:json[0].lat,
-                longitude: json[0].lng
+                latitude:json[test-1].lat,
+                longitude: json[test-1].lng,
+                username: json[test-1].username
               }]
 
             })
@@ -1207,6 +1212,25 @@ call(args).catch(console.error)
       />
 
       ));
+
+let friendStarting = this.state.friendsLocation.map(friend => (
+     <MapView.Marker
+     key={friend.lat}
+     coordinate={{
+     latitude: friend.lat,
+     longitude: friend.lng,
+
+
+
+   }}
+   pinColor={'green'}
+   title={friend.username}
+   description={"På väg mot destination"}
+
+
+   />
+
+));
     // }
     // let insecureMarkers = this.state.insecureData.map(markers => (
     //      <MapView.Marker
@@ -1315,6 +1339,7 @@ call(args).catch(console.error)
           {this.state.insecureLocationsData}
           {this.state.secureLocations}
           {meetUp}
+          {friendStarting}
 
 
 
