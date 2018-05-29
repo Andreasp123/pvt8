@@ -129,10 +129,10 @@ export default class Main extends Component {
       panicLocation: [],
 
 			coordinates: [
-        {
-        latitude: this.props.navigation.state.params.testLat,
-        longitude: this.props.navigation.state.params.testLong,
-        }
+        // {
+        // latitude: this.props.navigation.state.params.testLat,
+        // longitude: this.props.navigation.state.params.testLong,
+        // }
 			],
 		};
 
@@ -1174,7 +1174,7 @@ call(args).catch(console.error)
 
 	render() {
     console.log(this.state.shareGPS)
-    //this.fetchPanicLocations()
+
     //this.checkMeetUps()
 
 
@@ -1355,8 +1355,8 @@ let friendStarting = this.state.friendsLocation.map(friend => (
             //longitude:this.state.testLong,
             // latitude:this.state.latitude,
             // longitude:this.state.longitude,
-            latitudeDelta: 0.043,
-            longitudeDelta: 0.034}}
+            latitudeDelta: 0.0043,
+            longitudeDelta: 0.0034}}
 
           ref={c => this.mapView = c}
           onPress={this.onMapPress}
