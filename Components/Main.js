@@ -50,17 +50,24 @@ export default class Main extends Component {
 
 		this.state = {
       username : this.props.navigation.state.params.username,
-      shareGPS: this.props.navigation.state.params.shareGPS,
+      shareGPS: true,
       meetingPlace: this.props.navigation.state.params.meetingPlace,
       createMeetUp: this.props.navigation.state.params.createMeetUp,
       acceptMeetingRequest: false,
       fetchedMeetUps: false,
       meetUpPlace: '',
+      awaitingResponse: true,
+      delay : 25*100,
+      latitude: '',
+      longitude: '',
+
+      acceptedMeetingRequest: false,
+
 
       friendToMeet: [
         {
-        latitude:59.335493,
-        longitude:18.085179
+        latitude:59.332407,
+        longitude:18.064546
         }
       ],
 
@@ -95,8 +102,8 @@ export default class Main extends Component {
       destinationLocation : [],
       searchField: '',
 
-      latitude: 59.326822,
-      longitude: 18.071540,
+      // latitude: 59.326822,
+      // longitude: 18.071540,
 
       friendsCoordinatesNotAccepted: [],
       friendsCoordinatesAccepted: [],
@@ -226,7 +233,7 @@ confirmFriendRequest(){
 checkMeetUps(){
   console.log("i checkMeetUps")
   if(!this.state.fetchedMeetUps){
-    this.setState({fetchedMeetUps: true})
+    //this.setState({fetchedMeetUps: true})
     fetch('https://pvt.dsv.su.se/Group08/getMeetingRequests', {
    method: 'POST',
    headers: {
@@ -245,7 +252,8 @@ checkMeetUps(){
      response.json().then(json =>{
        console.log("i checkmeetups", json)
        console.log("json.username",json[0].username)
-       if(json[0].username !== undefined){
+       if(json[0].username !== undefined && this.state.awaitingResponse === true){
+         this.setState({awaitingResponse: false})
          this.setState({friendsName: json[0].username})
          this.acceptFriendsMeeting(json[0].username)
        }
@@ -435,7 +443,7 @@ getWorkingLamps(){
      .then((response) => response.json())
      .then((responseJson) => {
        this.setState({panicData : responseJson})
-       //console.log(this.state.panicData)
+       console.log("panic data",this.state.panicData)
 
 
 
@@ -455,23 +463,42 @@ shareMyLocation(){
     //console.log("sharegps i main", this.state.shareGPS)
 
     if(this.state.shareGPS){
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.setState({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            error: null,
+          });
+          fetch('https://pvt.dsv.su.se/Group08/setUserLocation', {
+         method: 'POST',
+         headers: {
+            'Accept': 'application/json',
+           'Content-Type': "application/json"},
+         body: JSON.stringify({
 
-      fetch('https://pvt.dsv.su.se/Group08/setUserLocation', {
-     method: 'POST',
-     headers: {
-        'Accept': 'application/json',
-       'Content-Type': "application/json"},
-     body: JSON.stringify({
+            "username":  this.state.username,
+            "latitude": position.coords.latitude,
+            "longitude": position.coords.longitude,
+         })
+       }).
+         then((response) => {
+           if(response.ok){
+           }
+         });
 
-        "username":  this.state.username,
-        "latitude": this.state.latitude,
-        "longitude": this.state.longitude,
-     })
-   }).
-     then((response) => {
-       if(response.ok){
-       }
-     });
+
+
+        },
+        (error) => this.setState({ error: error.message }),
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      );
+      //
+      console.log("detta är det jag skickar")
+      console.log(this.state.latitude)
+      console.log(this.state.longitude)
+
+
     }
   }
 
@@ -491,11 +518,6 @@ shareMyLocation(){
      response.json().then(json =>{
        if(json[0].username !== undefined){
          var test = json.length;
-         console.log(json.length,"1111111")
-         console.log(json[test-1].lat, "bröl")
-         console.log("här är det fel", json)
-
-
             let friend = json.map(friend => (
               <MapView.Marker
               key={friend.dateTime}
@@ -508,16 +530,22 @@ shareMyLocation(){
               pinColor={'green'}
                 />
             ));
-            //console.log("friend", friend)
+            console.log("i fetch", json[test-1].username)
+            console.log("hela i fetch", json)
             this.setState({
               friendsCoordinates: friend,
               friendsLocation:[{
+                latitude:json[0].lat,
+                longitude: json[0].lng,
+                username: json[0].username
+              }],
+              friendToMeet:[{
                 latitude:json[test-1].lat,
-                longitude: json[test-1].lng,
-                username: json[test-1].username
+                longitude:json[test-1].lng
               }]
 
             })
+            console.log("friendslocation", this.state.friendsLocation)
 
             // if(json.username === this.state.friendsName){
             //   friendToMeet:[{
@@ -671,7 +699,7 @@ shareMyLocation(){
     this.checkFriendRequests()
     this.getInsecureLocation()
     this.getSecureLocation()
-    this.fetchPanicLocations()
+    //this.fetchPanicLocations()
     this.shareMyLocation()
     this.fetchNotWorkingLamps()
 
@@ -791,9 +819,9 @@ shareMyLocation(){
              latitude: markers.lat,
              longitude: markers.lng,
            }}
-           title={'Otrygg händelse' + markers.key}
+           title={'Otryggt! ' + markers.dateTime}
            description={markers.val}
-           pinColor={'red'}
+           pinColor={'purple'}
 
 
            />
@@ -1145,6 +1173,11 @@ call(args).catch(console.error)
 
 
 	render() {
+    console.log(this.state.shareGPS)
+    //this.fetchPanicLocations()
+    //this.checkMeetUps()
+
+
 
 
 
@@ -1197,17 +1230,16 @@ call(args).catch(console.error)
     // if(street.length > 1){
       let panicMarker = this.state.panicData.map(panic => (
 
-        <MapView.Circle
+        <MapView.Marker
         key={panic.id}
-        center={{
+        coordinate={{
         latitude: panic.lat,
         longitude: panic.lng,
 
       }}
-      radius={3}
-      strokeWidth = { 1 }
-      strokeColor = { 'purple' }
-      fillColor = { 'purple' }
+      pinColor={'red'}
+      title={"Hjälp!"}
+      description={"En användare behöver hjälp " + panic.date}
 
       />
 
