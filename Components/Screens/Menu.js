@@ -22,7 +22,7 @@ export default class Menu extends React.Component {
 
     this.state={
       username : this.props.navigation.state.params.username,
-      shareGPS: true,
+      shareGPS: false,
       shareLocation : 'Dela min plats',
       userReport: '',
       newFriend: '',
@@ -36,6 +36,7 @@ export default class Menu extends React.Component {
 
 
   setShareLocation(){
+    console.log(this.state.shareGPS)
     fetch('https://pvt.dsv.su.se/Group08/setShareLocationFriends', {
    method: 'POST',
    headers: {
@@ -56,6 +57,7 @@ export default class Menu extends React.Component {
 
   onClickShareLocation(){
     console.log(this.state.username)
+    console.log(this.state.shareLocation)
     if(this.state.shareLocation === 'Dela min plats'){
       this.setState({
         shareLocation : 'Sluta dela plats',
@@ -182,6 +184,8 @@ getInsecureLocation(){
       this.setState({
         userReport: report
       })
+      console.log("i setsafe", report)
+      console.log(this.state.username, this.state.userReport, this.state.latitude, this.state.longitude)
       fetch('https://pvt.dsv.su.se/Group08/addSecureLocation', {
      method: 'POST',
      headers: {
@@ -251,6 +255,7 @@ getInsecureLocation(){
     this.setState({
       meetingPlace: destination,
       createMeetUp: true,
+      shareGPS:true
     })
 
     fetch('https://pvt.dsv.su.se/Group08/meetingRequest', {
@@ -328,8 +333,12 @@ getInsecureLocation(){
   }
 
   exitProfileBtn(){
-    console.log("friendtomeet",this.state.friendToMeet)
-    console.log("meetingplace",this.state.meetingPlace)
+    console.log("i exit först", this.state.shareGPS)
+    this.setState({
+      shareGPS: true
+    })
+    console.log("efter setstate", this.state.shareGPS)
+
     this.navigate({
     routeName: 'main',
     key: 'main',
@@ -368,15 +377,15 @@ getInsecureLocation(){
         </View>
 
         <View style={styles.menuContainer}>
-              
+
           <TouchableOpacity style={{width: "90%"}} onPress={() => {this.reportEvent();}}>
             <MenuItem value="Rapportera otrygg händelse" symbol="frown-o"/>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={{width: "90%"}} onPress={() => {this.reportSafePlace();}}>
             <MenuItem value="Dela trygg plats" symbol="smile-o"/>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={{width: "90%"}} onPress={() => {this.addFriend();}}>
             <MenuItem value="Lägg till vän" symbol="user-plus"/>
           </TouchableOpacity>
@@ -397,7 +406,7 @@ getInsecureLocation(){
       </View>
 
 
-      
+
     );
   }
 }
