@@ -33,8 +33,8 @@ const LONGITUDE = -122.4053769;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const GOOGLE_MAPS_APIKEY = 'AIzaSyCYvMpmVhFc0ydILEuXGJNYNGFnBoKPCL8';
-const requestCoordinates = 'AIzaSyAprDH-yXK21Imj4qwj0zyKbzAdWHTom9M'
+const GOOGLE_MAPS_APIKEY = '';
+const requestCoordinates = ''
 
 //const myjsonstring = 'https://pvt.dsv.su.se/Group08/getLamps?working=false';
 
